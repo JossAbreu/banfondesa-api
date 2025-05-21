@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "moduleResolution": "node",
     "declaration": true,
     "removeComments": true,
     "emitDecoratorMetadata": true,
@@ -10,6 +11,30 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@auth/*": [
+        "src/auth/*"
+      ],
+      "@user/*": [
+        "src/user/*"
+      ],
+      "@loan/*": [
+        "src/loan/*"
+      ],
+      "@payments/*": [
+        "src/payments/*"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+    },
+    "types": [
+      "node"
+    ],
+    "esModuleInterop": true,
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,

@@ -1,23 +1,24 @@
 // src/auth/auth.controller.ts
-import { Controller, Post, Get, Body, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Request, UseGuards, Get, Body } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { JwtAuthGuard } from './jwt.guard';
-import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtAuthGuard } from './guards/jwt.guard';
+import { LoginDto } from './dto/login.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('auth')
 @Controller('v1.0/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
+
 
   @Post()
-  login(@Body() body: any) {
-    return this.authService.login(body);
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto); // << Aquí tú ya haces la validación
   }
-
-  @Get()
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  getProfile(@Request() req: any) {
-    return this.authService.getProfile(req.user);
+  @Get()
+  getProfile(@Request() req) {
+    return req.user;
   }
 }
