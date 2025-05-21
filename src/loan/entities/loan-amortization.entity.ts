@@ -13,27 +13,30 @@ export class LoanAmortization {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Loan, (loan) => loan.amortizations, { onDelete: 'CASCADE' })
-    loan: Loan;
-
     @Column()
     installmentNumber: number;
 
-    @Column({ type: 'date' })
+    @Column()
     dueDate: Date;
 
-    @Column({ type: 'numeric', precision: 12, scale: 2 })
+    @Column('decimal')
     principal: number;
 
-    @Column({ type: 'numeric', precision: 12, scale: 2 })
+    @Column('decimal')
     interest: number;
 
-    @Column({ type: 'numeric', precision: 12, scale: 2 })
+    @Column('decimal')
     totalPayment: number;
 
     @Column({ default: false })
     paid: boolean;
 
-    @Column({ type: 'date', nullable: true })
+    @Column({ type: 'timestamp', nullable: true })
     paymentDate: Date | null;
+
+    @ManyToOne(() => Loan, loan => loan.amortizations)
+    loan: Loan;
+
+    @Column()
+    loanId: number;
 }

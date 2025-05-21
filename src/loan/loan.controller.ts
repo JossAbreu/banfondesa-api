@@ -50,11 +50,11 @@ export class LoanController {
         return this.loanService.findOneWithAmortization(+id);
     }
 
-    // // 5. Aprobar / Rechazar préstamo
-    // @Post('v1.0/loan/approval')
-    // approveLoan(@Body() dto: ApprovalDto) {
-    //     return this.loanService.approveLoan(dto);
-    // }
+    // 5. Aprobar / Rechazar préstamo
+    @Post('v1.0/loan/approval')
+    approveLoan(@Body() dto: ApproveLoanDto) {
+        return this.loanService.approveOrReject(dto);
+    }
 
     // // 6. Obtener tabla de amortización
     // @Post('v1.0/loan/amor')

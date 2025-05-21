@@ -1,13 +1,16 @@
 // src/loan/dto/approve-loan.dto.ts
-import { IsBoolean, IsNumber } from 'class-validator';
-
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, Min } from 'class-validator';
 export class ApproveLoanDto {
     @IsNumber()
+    @IsNotEmpty()
     loanId: number;
 
     @IsBoolean()
+    @IsNotEmpty()
     approve: boolean;
 
     @IsNumber()
-    interestRate: number;
+    @Min(0)
+    @IsOptional()
+    interestRate?: number; // Solo requerido si approve === true
 }

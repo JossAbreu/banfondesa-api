@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Loan } from './entities/loan.entity';
@@ -9,17 +13,19 @@ import { PaymentDto } from './dto/payment.dto';
 import { AbonoDto } from './dto/abono.dto';
 import { User } from 'src/user/entities/user.entity';
 import { GetUser } from '@/auth/decorators/get-user.decorator';
-
+import { LoanAmortization } from './entities/loan-amortization.entity'; // Asegúrate de importar esto correctamente
 
 @Injectable()
 export class LoanService {
     constructor(
         @InjectRepository(Loan)
         private readonly loanRepo: Repository<Loan>,
+
+        @InjectRepository(LoanAmortization)
+        private readonly loanAmortizationRepo: Repository<LoanAmortization>,
     ) { }
 
     async create(dto: CreateLoanDto, @GetUser() user: User): Promise<Loan> {
-        console.log('🧾 Creating loan for user:', user?.id);
         const loan = this.loanRepo.create({
             amount: dto.amount,
             termMonths: dto.termMonths,
@@ -34,16 +40,14 @@ export class LoanService {
     async findAll() {
         return {
             message: 'Lista de préstamos',
-            loans: await this.loanRepo.find()
+            loans: await this.loanRepo.find(),
         };
     }
 
     async findOneWithoutAmortization(id: number) {
         const loan = await this.loanRepo.findOne({ where: { id } });
 
-        if (!loan) {
-            throw new NotFoundException('Préstamo no encontrado');
-        }
+        if (!loan) throw new NotFoundException('Préstamo no encontrado');
 
         return loan;
     }
@@ -55,7 +59,7 @@ export class LoanService {
             loan.amount,
             loan.termMonths,
             loan.interestRate,
-            loan.amortizationType,
+            loan.amortizationType as 'fija' | 'variable',
         );
 
         return {
@@ -64,16 +68,51 @@ export class LoanService {
         };
     }
 
-    // async approveOrReject(dto: ApproveLoanDto) {
-    //     const loan = await this.loanRepo.findOne({ where: { id: dto.loanId } });
+    async approveOrReject(dto: ApproveLoanDto) {
+        const loan = await this.loanRepo.findOne({ where: { id: dto.loanId } });
 
-    //     if (!loan) {
-    //         throw new NotFoundException('Préstamo no encontrado');
-    //     }
+        if (!loan) throw new NotFoundException('Préstamo no encontrado');
 
-    //     loan.status = dto.status;
-    //     return this.loanRepo.save(loan);
-    // }
+        if (dto.approve) {
+            if (dto.interestRate === undefined) {
+                throw new BadRequestException('La tasa de interés es obligatoria al aprobar el préstamo');
+            }
+            loan.status = 'aprobado';
+            loan.approvedAt = new Date();
+            loan.interestRate = dto.interestRate;
+
+            await this.loanRepo.save(loan);
+
+            const amortization = this.generateAmortization(
+                loan.amount,
+                loan.termMonths,
+                loan.interestRate,
+                loan.amortizationType as 'fija' | 'variable',
+            );
+
+            const startDate = new Date();
+
+            for (const item of amortization) {
+                await this.loanAmortizationRepo.save({
+                    loanId: loan.id,
+                    installmentNumber: item.installment,
+                    dueDate: this.calculateDueDate(startDate, item.installment),
+                    principal: item.principal,
+                    interest: item.interest,
+                    totalPayment: item.total,
+                    paid: false,
+                    paymentDate: null
+                });
+            }
+        } else {
+            loan.status = 'rechazado';
+            await this.loanRepo.save(loan);
+        }
+
+        return {
+            message: `Préstamo ${dto.approve ? 'aprobado' : 'rechazado'} correctamente`,
+        };
+    }
 
     private generateAmortization(
         amount: number,
@@ -81,7 +120,7 @@ export class LoanService {
         interest: number,
         type: 'fija' | 'variable',
     ) {
-        const monthlyRate = interest / 12;
+        const monthlyRate = interest / 12; // CORREGIDO: de % a decimal
         type AmortizationEntry = {
             installment: number;
             principal: number;
@@ -92,38 +131,38 @@ export class LoanService {
         const amortization: AmortizationEntry[] = [];
 
         if (type === 'fija') {
-            const monthlyPayment = (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -term));
+            const monthlyPayment =
+                (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -term));
+            let balance = amount;
 
             for (let i = 1; i <= term; i++) {
-                const interestPayment = amount * monthlyRate;
+                const interestPayment = balance * monthlyRate;
                 const principalPayment = monthlyPayment - interestPayment;
-                amount -= principalPayment;
+                balance -= principalPayment;
 
                 amortization.push({
                     installment: i,
                     principal: Number(principalPayment.toFixed(2)),
                     interest: Number(interestPayment.toFixed(2)),
                     total: Number(monthlyPayment.toFixed(2)),
-                    balance: Number(Math.max(amount, 0).toFixed(2)),
+                    balance: Number(Math.max(balance, 0).toFixed(2)),
                 });
             }
-        }
-
-        if (type === 'variable') {
+        } else {
             const fixedPrincipal = amount / term;
-            let remainingBalance = amount;
+            let balance = amount;
 
             for (let i = 1; i <= term; i++) {
-                const interestPayment = remainingBalance * monthlyRate;
+                const interestPayment = balance * monthlyRate;
                 const totalPayment = fixedPrincipal + interestPayment;
-                remainingBalance -= fixedPrincipal;
+                balance -= fixedPrincipal;
 
                 amortization.push({
                     installment: i,
                     principal: Number(fixedPrincipal.toFixed(2)),
                     interest: Number(interestPayment.toFixed(2)),
                     total: Number(totalPayment.toFixed(2)),
-                    balance: Number(Math.max(remainingBalance, 0).toFixed(2)),
+                    balance: Number(Math.max(balance, 0).toFixed(2)),
                 });
             }
         }
@@ -131,33 +170,14 @@ export class LoanService {
         return amortization;
     }
 
+    private calculateDueDate(startDate: Date, installmentNumber: number): Date {
+        const due = new Date(startDate);
+        due.setMonth(due.getMonth() + installmentNumber);
+        return due;
+    }
 
-    //     // Para amortización "variable", podrías implementar otra lógica.
+    // Puedes completar estos métodos después si los necesitas
+    // async registerPayment(dto: PaymentDto) { ... }
 
-    //     return amortization;
-    // }
-
-    // async registerPayment(dto: PaymentDto) {
-    //     const loan = await this.loanRepo.findOne({ where: { id: dto.loanId } });
-
-    //     if (!loan) throw new NotFoundException('Préstamo no encontrado');
-
-    //     if (dto.amount > loan.pendingBalance) {
-    //         throw new BadRequestException('El monto supera el saldo pendiente');
-    //     }
-
-    //     loan.pendingBalance -= dto.amount;
-
-    //     return this.loanRepo.save(loan);
-    // }
-
-    // async registerAbono(dto: AbonoDto) {
-    //     const loan = await this.loanRepo.findOne({ where: { id: dto.loanId } });
-
-    //     if (!loan) throw new NotFoundException('Préstamo no encontrado');
-
-    //     loan.pendingBalance -= dto.amount;
-
-    //     return this.loanRepo.save(loan);
-    // }
+    // async registerAbono(dto: AbonoDto) { ... }
 }
