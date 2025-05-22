@@ -2,9 +2,12 @@ import { IsInt, IsNumber, IsEnum, Max, Min, IsPositive } from 'class-validator';
 
 export class CreateLoanDto {
 
+    @IsInt({ message: 'el id debe ser un número entero' })
+    @IsPositive({ message: 'el id debe ser un número entero positivo' })
+    clientId: number;
 
-    @IsInt()
-    @IsPositive()
+    @IsInt({ message: 'el monto debe ser un número entero' })
+    @IsPositive({ message: 'el monto debe ser un número entero positivo' })
     amount: number;
 
     @IsInt()

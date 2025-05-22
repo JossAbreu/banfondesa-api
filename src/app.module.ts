@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 // importa aquí otros módulos como UserModule, LoanModule, etc.
 import { UserModule } from './user/user.module'; // Asegúrate de importar el módulo de usuario
 import { LoanModule } from '@loan/loan.module'; // Asegúrate de importar el módulo de usuario
+import { ClientsModule } from '@client/clients.module';
 
 
 @Module({
@@ -22,6 +23,7 @@ import { LoanModule } from '@loan/loan.module'; // Asegúrate de importar el mó
     AuthModule,
     UserModule,
     LoanModule,
+    ClientsModule,
   ],
 })
 export class AppModule { }

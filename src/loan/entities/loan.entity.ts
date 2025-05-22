@@ -8,8 +8,9 @@ import {
     OneToMany,
     CreateDateColumn,
     UpdateDateColumn,
+    JoinColumn,
 } from 'typeorm';
-import { User } from '@user/entities/user.entity';
+import { Client } from '@client/entities/clients.entity';
 import { LoanAmortization } from '@/loan/entities/loan-amortization.entity';
 import { LoanPayment } from '@loan/entities/loan-payment.entity';
 import { CapitalPayment } from '@loan/entities/capital-payment.entity';
@@ -22,8 +23,12 @@ export class Loan {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => User, (user) => user.loans, { eager: true })
-    user: User;
+    @ManyToOne(() => Client, (client) => client.loans, { eager: true })
+    @JoinColumn({ name: 'clientId' }) // Esto vincula el campo 'clientId' con la relación
+    client: Client;
+
+    @Column()
+    clientId: number;
 
     @Column({ type: 'numeric', precision: 12, scale: 2 })
     amount: number;

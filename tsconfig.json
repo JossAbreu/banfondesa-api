@@ -24,6 +24,9 @@
       "@loan/*": [
         "src/loan/*"
       ],
+      "@client/*": [
+        "src/clients/*"
+      ],
       "@payments/*": [
         "src/payments/*"
       ],

@@ -12,26 +12,42 @@ import { AmortizationDto } from './dto/amortization.dto';
 import { PaymentDto } from './dto/payment.dto';
 import { AbonoDto } from './dto/abono.dto';
 import { User } from 'src/user/entities/user.entity';
-import { GetUser } from '@/auth/decorators/get-user.decorator';
 import { LoanAmortization } from './entities/loan-amortization.entity'; // Asegúrate de importar esto correctamente
+import { Client } from '@/clients/entities/clients.entity';
 
 @Injectable()
 export class LoanService {
     constructor(
         @InjectRepository(Loan)
         private readonly loanRepo: Repository<Loan>,
+        @InjectRepository(Client)
+        private readonly clientRepo: Repository<Client>,
 
         @InjectRepository(LoanAmortization)
         private readonly loanAmortizationRepo: Repository<LoanAmortization>,
     ) { }
 
-    async create(dto: CreateLoanDto, @GetUser() user: User): Promise<Loan> {
+    async create(dto: CreateLoanDto): Promise<Loan> {
+        const client = await this.clientRepo.findOne({ where: { id: dto.clientId } });
+        if (!client) {
+            throw new NotFoundException('Cliente no encontrado');
+        }
+
+        // Verifica si el cliente ya tiene un préstamo pendiente
+        const existingLoan = await this.loanRepo.findOne({
+            where: { clientId: dto.clientId, status: 'pendiente' },
+        });
+        if (existingLoan) {
+            throw new BadRequestException('El cliente ya tiene un préstamo pendiente');
+        }
+
+
         const loan = this.loanRepo.create({
             amount: dto.amount,
             termMonths: dto.termMonths,
             interestRate: dto.interestRate,
             amortizationType: dto.amortizationType,
-            user,
+            clientId: dto.clientId,
         });
 
         return this.loanRepo.save(loan);
@@ -73,6 +89,9 @@ export class LoanService {
 
         if (!loan) throw new NotFoundException('Préstamo no encontrado');
 
+        if (loan.status !== 'pendiente') {
+            throw new BadRequestException('El préstamo ya ha sido procesado');
+        }
         if (dto.approve) {
             if (dto.interestRate === undefined) {
                 throw new BadRequestException('La tasa de interés es obligatoria al aprobar el préstamo');

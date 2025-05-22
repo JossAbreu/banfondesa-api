@@ -9,12 +9,13 @@ import { LoanApproval } from '@loan/entities/loan-approval.entity';
 import { LoanService } from './loan.service';
 import { LoanController } from './loan.controller';
 
-import { User } from '@user/entities/user.entity'; // Importa el módulo de pagos si es necesario
+// Importa el módulo de pagos si es necesario
+import { Client } from '@client/entities/clients.entity'; // Importa el módulo de pagos si es necesario
 
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Loan, User, CapitalPayment, LoanAmortization, LoanPayment, LoanApproval])],
+    imports: [TypeOrmModule.forFeature([Loan, Client, CapitalPayment, LoanAmortization, LoanPayment, LoanApproval])],
     controllers: [LoanController],
     providers: [LoanService],
     exports: [LoanService, TypeOrmModule],

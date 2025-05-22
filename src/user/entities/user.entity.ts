@@ -1,6 +1,6 @@
 // src/user/entities/user.entity.ts
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Loan } from '@loan/entities/loan.entity';
+
 
 @Entity('users')
 export class User {
@@ -17,6 +17,5 @@ export class User {
     status: boolean;
 
 
-    @OneToMany(() => Loan, loan => loan.user)
-    loans: Loan[];
+
 }

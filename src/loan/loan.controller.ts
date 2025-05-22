@@ -26,10 +26,10 @@ export class LoanController {
 
     // 1. Crear préstamo
     @Post('v1.0/loan')
-    createLoan(@Body() dto: CreateLoanDto, @GetUser() user: User) {
+    createLoan(@Body() dto: CreateLoanDto) {
         console.log('🔥 createLoan called', dto);
-        console.log('🔥 createLoan user', user);
-        return this.loanService.create(dto, user);
+
+        return this.loanService.create(dto);
     }
 
     // 2. Listar préstamos
