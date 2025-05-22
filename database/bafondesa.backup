@@ -5,7 +5,7 @@
 -- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.4
 
--- Started on 2025-05-22 14:41:42
+-- Started on 2025-05-22 17:50:33
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -33,7 +33,7 @@ CREATE TABLE public.capital_payments (
     amount numeric(12,2) NOT NULL,
     description text,
     "paymentDate" date DEFAULT ('now'::text)::date NOT NULL,
-    "loanId" integer
+    "loanId" integer NOT NULL
 );
 
 
@@ -382,6 +382,20 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 --
 
 COPY public.capital_payments (id, amount, description, "paymentDate", "loanId") FROM stdin;
+6	1000.00	Abono extra del pago de la cuota #2	2025-05-22	18
+7	1000.00	Abono extra del pago de la cuota #2	2025-05-22	19
+8	1000.00	Abono extra del pago de la cuota #1	2025-05-22	20
+9	1000.00	Abono extra del pago de la cuota #1	2025-05-22	21
+10	1000.00	Abono extra del pago de la cuota #2	2025-05-22	21
+11	1000.00	Abono extra del pago de la cuota #3	2025-05-22	21
+12	1000.00	Abono extra del pago de la cuota #4	2025-05-22	21
+13	1000.00	Abono extra del pago de la cuota #5	2025-05-22	21
+14	1000.00	Abono extra del pago de la cuota #6	2025-05-22	21
+15	1000.00	Abono extra del pago de la cuota #7	2025-05-22	21
+16	1000.00	Abono extra del pago de la cuota #8	2025-05-22	21
+17	1000.00	Abono extra del pago de la cuota #9	2025-05-22	21
+18	4060.20	Abono extra del pago de la cuota #10	2025-05-22	21
+19	9884.88	Abono extra del pago de la cuota #11	2025-05-22	21
 \.
 
 
@@ -392,6 +406,7 @@ COPY public.capital_payments (id, amount, description, "paymentDate", "loanId") 
 --
 
 COPY public.clients (id, name, last_name, email, phone) FROM stdin;
+1	Miguel	abreu	pedro@gmail.com	9087654352
 \.
 
 
@@ -402,6 +417,66 @@ COPY public.clients (id, name, last_name, email, phone) FROM stdin;
 --
 
 COPY public.loan_amortizations (id, principal, interest, paid, "installmentNumber", "totalPayment", "loanId", "dueDate", "paymentDate") FROM stdin;
+132	8205.04	679.84	t	5	8884.88	21	2025-10-22 17:24:18.489	2025-05-22 17:39:53.153
+133	8287.09	597.79	t	6	8884.88	21	2025-11-22 17:24:18.489	2025-05-22 17:41:44.936
+134	8369.96	514.92	t	7	8884.88	21	2025-12-22 17:24:18.489	2025-05-22 17:43:19.141
+135	8453.66	431.22	t	8	8884.88	21	2026-01-22 17:24:18.489	2025-05-22 17:45:21.408
+136	8538.19	346.68	t	9	8884.88	21	2026-02-22 17:24:18.489	2025-05-22 17:46:47.572
+140	5653.38	171.3	t	10	5824.68	21	2026-03-22 17:46:47.635	2025-05-22 17:47:33.589
+27	7884.88	1000	t	1	8884.88	17	2025-06-22 17:01:17.061	2025-05-22 17:02:24.124
+39	NaN	NaN	f	2	NaN	17	2025-06-22 17:02:24.149	\N
+40	NaN	NaN	f	3	NaN	17	2025-07-22 17:02:24.149	\N
+41	NaN	NaN	f	4	NaN	17	2025-08-22 17:02:24.149	\N
+42	NaN	NaN	f	5	NaN	17	2025-09-22 17:02:24.149	\N
+43	NaN	NaN	f	6	NaN	17	2025-10-22 17:02:24.149	\N
+44	NaN	NaN	f	7	NaN	17	2025-11-22 17:02:24.149	\N
+45	NaN	NaN	f	8	NaN	17	2025-12-22 17:02:24.149	\N
+46	NaN	NaN	f	9	NaN	17	2026-01-22 17:02:24.149	\N
+47	NaN	NaN	f	10	NaN	17	2026-02-22 17:02:24.149	\N
+48	NaN	NaN	f	11	NaN	17	2026-03-22 17:02:24.149	\N
+49	NaN	NaN	f	12	NaN	17	2026-04-22 17:02:24.149	\N
+143	0	0	t	11	0	21	2026-04-22 17:47:33.617	2025-05-22 17:47:58.014
+145	0	0	f	12	0	21	2026-05-22 17:47:58.042	\N
+50	7884.88	1000	t	1	8884.88	18	2025-06-22 17:03:53.984	2025-05-22 17:09:19.745
+62	7963.73	921.15	t	2	8884.88	18	2025-07-22 17:09:19.782	2025-05-22 17:11:46.424
+73	NaN	NaN	f	3	NaN	18	2025-08-22 17:11:46.461	\N
+74	NaN	NaN	f	4	NaN	18	2025-09-22 17:11:46.461	\N
+75	NaN	NaN	f	5	NaN	18	2025-10-22 17:11:46.461	\N
+76	NaN	NaN	f	6	NaN	18	2025-11-22 17:11:46.461	\N
+77	NaN	NaN	f	7	NaN	18	2025-12-22 17:11:46.461	\N
+78	NaN	NaN	f	8	NaN	18	2026-01-22 17:11:46.461	\N
+79	NaN	NaN	f	9	NaN	18	2026-02-22 17:11:46.461	\N
+80	NaN	NaN	f	10	NaN	18	2026-03-22 17:11:46.461	\N
+81	NaN	NaN	f	11	NaN	18	2026-04-22 17:11:46.461	\N
+82	NaN	NaN	f	12	NaN	18	2026-05-22 17:11:46.461	\N
+83	7884.88	1000	t	1	8884.88	19	2025-06-22 17:16:28.41	2025-05-22 17:16:53.47
+84	7963.73	921.15	t	2	8884.88	19	2025-07-22 17:16:28.41	2025-05-22 17:17:29.338
+97	NaN	NaN	f	5	NaN	19	2025-10-22 17:17:29.363	\N
+98	NaN	NaN	f	6	NaN	19	2025-11-22 17:17:29.363	\N
+99	NaN	NaN	f	7	NaN	19	2025-12-22 17:17:29.363	\N
+100	NaN	NaN	f	8	NaN	19	2026-01-22 17:17:29.363	\N
+101	NaN	NaN	f	9	NaN	19	2026-02-22 17:17:29.363	\N
+102	NaN	NaN	f	10	NaN	19	2026-03-22 17:17:29.363	\N
+103	NaN	NaN	f	11	NaN	19	2026-04-22 17:17:29.363	\N
+104	NaN	NaN	f	12	NaN	19	2026-05-22 17:17:29.363	\N
+95	NaN	NaN	t	3	NaN	19	2025-08-22 17:17:29.363	2025-05-22 17:20:51.957
+96	NaN	NaN	t	4	NaN	19	2025-09-22 17:17:29.363	2025-05-22 17:21:18.801
+105	7884.88	1000	t	1	8884.88	20	2025-06-22 17:22:10.498	2025-05-22 17:22:22.981
+117	NaN	NaN	f	2	NaN	20	2025-07-22 17:22:23.02	\N
+118	NaN	NaN	f	3	NaN	20	2025-08-22 17:22:23.02	\N
+119	NaN	NaN	f	4	NaN	20	2025-09-22 17:22:23.02	\N
+120	NaN	NaN	f	5	NaN	20	2025-10-22 17:22:23.02	\N
+121	NaN	NaN	f	6	NaN	20	2025-11-22 17:22:23.02	\N
+122	NaN	NaN	f	7	NaN	20	2025-12-22 17:22:23.02	\N
+123	NaN	NaN	f	8	NaN	20	2026-01-22 17:22:23.02	\N
+124	NaN	NaN	f	9	NaN	20	2026-02-22 17:22:23.02	\N
+125	NaN	NaN	f	10	NaN	20	2026-03-22 17:22:23.02	\N
+126	NaN	NaN	f	11	NaN	20	2026-04-22 17:22:23.02	\N
+127	NaN	NaN	f	12	NaN	20	2026-05-22 17:22:23.02	\N
+128	7884.88	1000	t	1	8884.88	21	2025-06-22 17:24:18.489	2025-05-22 17:25:07.675
+129	7963.73	921.15	t	2	8884.88	21	2025-07-22 17:24:18.489	2025-05-22 17:26:34.789
+130	8043.36	841.51	t	3	8884.88	21	2025-08-22 17:24:18.489	2025-05-22 17:27:36.941
+131	8123.8	761.08	t	4	8884.88	21	2025-09-22 17:24:18.489	2025-05-22 17:31:24.857
 \.
 
 
@@ -432,6 +507,11 @@ COPY public.loan_payments (id, "amountPaid", "paymentDate", "isExtraPayment", "l
 --
 
 COPY public.loans (id, amount, "termMonths", "interestRate", "amortizationType", "createdAt", "approvedAt", "clientId", status) FROM stdin;
+17	100000.00	12	0.12	fija	2025-05-22 16:57:58.708545	2025-05-22 17:01:17.048	1	aprobado
+18	100000.00	12	0.12	fija	2025-05-22 17:03:35.634129	2025-05-22 17:03:53.976	1	aprobado
+19	100000.00	12	0.12	fija	2025-05-22 17:16:21.570983	2025-05-22 17:16:28.401	1	aprobado
+20	100000.00	12	0.12	fija	2025-05-22 17:21:51.476498	2025-05-22 17:22:10.489	1	aprobado
+21	100000.00	12	0.12	fija	2025-05-22 17:24:12.208768	2025-05-22 17:24:18.477	1	aprobado
 \.
 
 
@@ -453,7 +533,7 @@ COPY public.users (id, username, password, status) FROM stdin;
 -- Name: capital_payments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.capital_payments_id_seq', 1, false);
+SELECT pg_catalog.setval('public.capital_payments_id_seq', 19, true);
 
 
 --
@@ -462,7 +542,7 @@ SELECT pg_catalog.setval('public.capital_payments_id_seq', 1, false);
 -- Name: clients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.clients_id_seq', 1, false);
+SELECT pg_catalog.setval('public.clients_id_seq', 1, true);
 
 
 --
@@ -471,7 +551,7 @@ SELECT pg_catalog.setval('public.clients_id_seq', 1, false);
 -- Name: loan_amortizations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.loan_amortizations_id_seq', 14, true);
+SELECT pg_catalog.setval('public.loan_amortizations_id_seq', 145, true);
 
 
 --
@@ -498,7 +578,7 @@ SELECT pg_catalog.setval('public.loan_payments_id_seq', 1, false);
 -- Name: loans_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.loans_id_seq', 14, true);
+SELECT pg_catalog.setval('public.loans_id_seq', 21, true);
 
 
 --
@@ -636,7 +716,7 @@ ALTER TABLE ONLY public.capital_payments
     ADD CONSTRAINT "FK_ef1f0771d2d6b459f80aa686cbe" FOREIGN KEY ("loanId") REFERENCES public.loans(id) ON DELETE CASCADE;
 
 
--- Completed on 2025-05-22 14:41:43
+-- Completed on 2025-05-22 17:50:33
 
 --
 -- PostgreSQL database dump complete
