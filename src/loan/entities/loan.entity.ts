@@ -1,5 +1,4 @@
 // src/entities/loan.entity.ts
-
 import {
     Entity,
     PrimaryGeneratedColumn,
@@ -7,7 +6,6 @@ import {
     ManyToOne,
     OneToMany,
     CreateDateColumn,
-    UpdateDateColumn,
     JoinColumn,
 } from 'typeorm';
 import { Client } from '@client/entities/clients.entity';
@@ -24,7 +22,7 @@ export class Loan {
     id: number;
 
     @ManyToOne(() => Client, (client) => client.loans, { eager: true })
-    @JoinColumn({ name: 'clientId' }) // Esto vincula el campo 'clientId' con la relación
+    @JoinColumn({ name: 'clientId' })
     client: Client;
 
     @Column()
@@ -39,17 +37,10 @@ export class Loan {
     @Column({ type: 'numeric', precision: 5, scale: 2 })
     interestRate: number;
 
-    @Column({
-        type: 'varchar',
-        length: 20,
-    })
+    @Column({ type: 'varchar', length: 20 })
     amortizationType: 'fija' | 'variable';
 
-    @Column({
-        type: 'varchar',
-        length: 20,
-        default: 'pendiente',
-    })
+    @Column({ type: 'varchar', length: 20, default: 'pendiente' })
     status: LoanStatus;
 
     @CreateDateColumn()

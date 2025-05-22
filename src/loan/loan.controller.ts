@@ -62,11 +62,11 @@ export class LoanController {
         return this.loanService.calculateAmortization(dto);
     }
 
-    // // 7. Registrar pago de cuota
-    // @Post('v1.0/loan/payment')
-    // registerPayment(@Body() dto: PaymentDto) {
-    //     return this.loanService.registerPayment(dto);
-    // }
+    // 7. Registrar pago de cuota
+    @Post('v1.0/loan/payment')
+    registerPayment(@Body() dto: PaymentDto) {
+        return this.loanService.registerPayment(dto);
+    }
 
     // // 8. Realizar abono a capital
     // @Post('v1.0/loan/abono')

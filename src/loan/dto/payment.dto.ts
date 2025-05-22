@@ -1,4 +1,4 @@
-import { IsInt, IsPositive, IsNumber } from 'class-validator';
+import { IsInt, IsPositive, IsNumber, Min } from 'class-validator';
 
 export class PaymentDto {
     @IsInt()
@@ -9,5 +9,6 @@ export class PaymentDto {
 
     @IsNumber()
     @IsPositive()
-    amount: number;
+    @Min(0.01)
+    amountPaid: number;
 }
