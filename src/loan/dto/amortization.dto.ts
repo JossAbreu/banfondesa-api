@@ -1,4 +1,4 @@
-import { IsNumber, IsPositive, IsInt, Min, IsIn } from 'class-validator';
+import { IsNumber, IsPositive, Max, IsInt, Min, IsIn } from 'class-validator';
 
 export class AmortizationDto {
     @IsNumber()
@@ -7,12 +7,13 @@ export class AmortizationDto {
 
     @IsInt()
     @Min(1)
-    term: number;
+    termMonths: number;
 
     @IsNumber()
-    @Min(0)
-    interest: number;
+    @Min(0, { message: 'el interes no puede ser menor a 0' })
+    @Max(0.99, { message: 'El interés no puede ser mayor a 0.99' })
+    interestRate: number;
 
     @IsIn(['fija', 'variable'])
-    type: 'fija' | 'variable';
+    amortizationType: 'fija' | 'variable';
 }

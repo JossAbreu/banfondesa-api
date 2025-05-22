@@ -189,12 +189,32 @@ export class LoanService {
         return amortization;
     }
 
+    // Método para calcular la fecha de vencimiento
     private calculateDueDate(startDate: Date, installmentNumber: number): Date {
         const due = new Date(startDate);
         due.setMonth(due.getMonth() + installmentNumber);
         return due;
     }
 
+    async calculateAmortization(dto: AmortizationDto) {
+        const { amount, termMonths, interestRate, amortizationType } = dto;
+
+        if (amount <= 0 || termMonths <= 0 || interestRate < 0) {
+            throw new BadRequestException('Parámetros inválidos');
+        }
+
+        const amortization = this.generateAmortization(
+            amount,
+            termMonths,
+            interestRate,
+            amortizationType,
+        );
+
+        return {
+            message: 'Amortización calculada exitosamente',
+            amortizationSchedule: amortization,
+        };
+    }
     // Puedes completar estos métodos después si los necesitas
     // async registerPayment(dto: PaymentDto) { ... }
 

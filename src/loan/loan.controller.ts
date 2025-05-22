@@ -56,11 +56,11 @@ export class LoanController {
         return this.loanService.approveOrReject(dto);
     }
 
-    // // 6. Obtener tabla de amortización
-    // @Post('v1.0/loan/amor')
-    // calculateAmortization(@Body() dto: AmortizationDto) {
-    //     return this.loanService.calculateAmortization(dto);
-    // }
+    // 6. Obtener tabla de amortización
+    @Post('v1.0/loan/amor')
+    calculateAmortization(@Body() dto: AmortizationDto) {
+        return this.loanService.calculateAmortization(dto);
+    }
 
     // // 7. Registrar pago de cuota
     // @Post('v1.0/loan/payment')
