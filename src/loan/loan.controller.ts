@@ -15,10 +15,10 @@ import { PaymentDto } from './dto/payment.dto';
 import { AbonoDto } from '@loan/dto/abono.dto';
 import { GetUser } from '@auth/decorators/get-user.decorator';
 import { User } from '@user/entities/user.entity';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 
-@ApiTags('loan')
+@ApiTags('Prestamos')
 @Controller()
 @UseGuards(JwtAuthGuard)
 export class LoanController {
@@ -26,13 +26,17 @@ export class LoanController {
 
     // 1. Crear préstamo
     @Post('v1.0/loan')
+    @ApiOperation({ summary: 'Crear un nuevo préstamo' })
+    @ApiResponse({ status: 200, description: 'El préstamo fue creado exitosamente.', type: CreateLoanDto })
+    @ApiResponse({ status: 404, description: 'Cliente no encontrado' })
+    @ApiResponse({ status: 400, description: 'El cliente ya tiene un préstamo pendiente' })
     createLoan(@Body() dto: CreateLoanDto) {
-
         return this.loanService.create(dto);
     }
 
     // 2. Listar préstamos
     @Get('v1.0/loan')
+    @ApiOperation({ summary: 'Listar todos los préstamos' })
     getAllLoans() {
         return this.loanService.findAll();
     }

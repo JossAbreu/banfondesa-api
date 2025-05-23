@@ -11,32 +11,25 @@ import { ApproveLoanDto } from './dto/approve-loan.dto';
 import { AmortizationDto } from './dto/amortization.dto';
 import { PaymentDto } from './dto/payment.dto';
 import { AbonoDto } from './dto/abono.dto';
-
 import { LoanAmortization } from './entities/loan-amortization.entity'; // 
 import { CapitalPayment } from './entities/capital-payment.entity';
 import { LoanApproval } from './entities/loan-approval.entity';
 import { Client } from '@/clients/entities/clients.entity';
-
 import { LoanCreationService } from '@loan/services/loan-creation.service';
 import { LoanAprovalOrRejectService } from '@loan/services/loan-aproval.service';
 import { generateAmortization } from "@/loan/utils/generateAmortization.util"
-import { recalculateAmortization, calculateRemainingBalance } from "@/loan/utils/recalculateAmortization.util"
 import { LoanPaymentService } from '@loan/services/loan-payment.service';
+import { LoanAbonoService } from '@loan/services/loan-abono.service';
 
 @Injectable()
 export class LoanService {
     constructor(
         @InjectRepository(Loan)
         private readonly loanRepo: Repository<Loan>,
-
-        @InjectRepository(LoanAmortization)
-        private readonly loanAmortizationRepo: Repository<LoanAmortization>,
-        @InjectRepository(CapitalPayment)
-        private readonly capitalPaymentRepo: Repository<CapitalPayment>,
-
         private readonly loanCreation: LoanCreationService,
         private readonly loanApprovalOrRejectRepo: LoanAprovalOrRejectService,
         private readonly loanPaymentRepo: LoanPaymentService,
+        private readonly loanAbonoRepo: LoanAbonoService,
     ) { }
     //metodo para crear un préstamo
     async create(dto: CreateLoanDto) {
@@ -127,27 +120,6 @@ export class LoanService {
 
     //funcion para registrar un abono al capital
     async registerAbono(dto: AbonoDto) {
-        //verificop si el monto es mayor a 0
-        if (dto.amount <= 0) {
-            throw new BadRequestException('El monto debe ser mayor a 0');
-        }
-        //verifico si el préstamo existe
-        const loan = await this.loanRepo.findOne({ where: { id: dto.loanId } });
-        if (!loan) throw new NotFoundException('Préstamo no encontrado');
-
-        const capitalPayment = this.capitalPaymentRepo.create({
-            loan,
-            amount: dto.amount,
-        });
-        await this.capitalPaymentRepo.save(capitalPayment);
-
-        // Recalcular la amortización del préstamo
-        await recalculateAmortization(loan.id, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo);
-
-        return {
-            message: 'Abono registrado correctamente',
-            remaining: await calculateRemainingBalance(loan.id, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo),
-            capitalPayment: capitalPayment.amount,
-        };
+        return this.loanAbonoRepo.registerAbono(dto);
     }
 }

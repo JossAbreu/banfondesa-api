@@ -49,7 +49,7 @@ export async function recalculateAmortization(loanId: number, loanRepo: Reposito
     );
     // console.log('Amortización recalculada:', newAmortization);
     // Eliminar solo las cuotas no pagadas
-    await this.loanAmortizationRepo.delete({
+    await loanAmortizationRepo.delete({
         loanId,
         paid: false,
     });
@@ -75,12 +75,12 @@ export async function recalculateAmortization(loanId: number, loanRepo: Reposito
     }
 
     //validar si las cuotas pendientes son 0 y si son son 0 cambiar el estado del préstamo a pagado y a las amortizaciones pagadas marcarlas pagadas
-    const pendingPayments = await this.loanAmortizationRepo.count({
+    const pendingPayments = await loanAmortizationRepo.count({
         where: { loanId, paid: false },
     });
 
     if (pendingPayments === 0) {
-        const loan = await this.loanRepo.findOne({ where: { id: loanId } });
+        const loan = await loanRepo.findOne({ where: { id: loanId } });
         if (loan) {
             loan.status = 'pagado';
             await loanRepo.save(loan);
