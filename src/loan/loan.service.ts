@@ -14,6 +14,7 @@ import { AbonoDto } from './dto/abono.dto';
 import { User } from 'src/user/entities/user.entity';
 import { LoanAmortization } from './entities/loan-amortization.entity'; // Asegúrate de importar esto correctamente
 import { CapitalPayment } from './entities/capital-payment.entity'; // Asegúrate de importar esto correctamente
+import { LoanApproval } from './entities/loan-approval.entity'; // Asegúrate de importar esto correctamente
 import { Client } from '@/clients/entities/clients.entity';
 
 @Injectable()
@@ -23,11 +24,12 @@ export class LoanService {
         private readonly loanRepo: Repository<Loan>,
         @InjectRepository(Client)
         private readonly clientRepo: Repository<Client>,
-
         @InjectRepository(LoanAmortization)
         private readonly loanAmortizationRepo: Repository<LoanAmortization>,
         @InjectRepository(CapitalPayment)
         private readonly capitalPaymentRepo: Repository<CapitalPayment>,
+        @InjectRepository(LoanApproval)
+        private readonly loanApprovalRepo: Repository<LoanApproval>,
     ) { }
 
     async create(dto: CreateLoanDto): Promise<Loan> {
@@ -95,13 +97,13 @@ export class LoanService {
         if (loan.status !== 'pendiente') {
             throw new BadRequestException('El préstamo ya ha sido procesado');
         }
+
         if (dto.approve) {
-            if (dto.interestRate === undefined) {
-                throw new BadRequestException('La tasa de interés es obligatoria al aprobar el préstamo');
-            }
+
+            const interest = dto.interestRate || loan.interestRate;
             loan.status = 'aprobado';
             loan.approvedAt = new Date();
-            loan.interestRate = dto.interestRate;
+            loan.interestRate = interest; // Asigna la tasa de interés si no está definida
 
             await this.loanRepo.save(loan);
 
@@ -113,6 +115,18 @@ export class LoanService {
             );
 
             const startDate = new Date();
+
+
+            // Guardar la aprobación del préstamo
+            const approval = this.loanApprovalRepo.create({
+                loan,
+                approved: true,
+                decisionDate: new Date(),
+                reviewerName: dto.reviewerName,
+                comment: dto.comment,
+            });
+
+            await this.loanApprovalRepo.save(approval);
 
             for (const item of amortization) {
                 await this.loanAmortizationRepo.save({

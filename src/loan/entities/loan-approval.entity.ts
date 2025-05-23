@@ -7,7 +7,7 @@ import {
     ManyToOne,
     CreateDateColumn,
 } from 'typeorm';
-import { Loan } from './loan.entity';
+import { Loan } from '@loan/entities/loan.entity';
 
 @Entity('loan_approvals')
 export class LoanApproval {
