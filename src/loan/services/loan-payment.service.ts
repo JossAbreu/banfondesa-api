@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoanAmortization } from '@loan/entities/loan-amortization.entity';
+import { LoanPayment } from '@loan/entities/loan-payment.entity';
 import { recalculateAmortization, calculateRemainingBalance } from '@loan/utils/recalculateAmortization.util';
 import { PaymentDto } from '@loan/dto/payment.dto';
 import { CapitalPayment } from '@loan/entities/capital-payment.entity';
@@ -20,6 +21,8 @@ export class LoanPaymentService {
         private readonly loanAmortizationRepo: Repository<LoanAmortization>,
         @InjectRepository(CapitalPayment)
         private readonly capitalPaymentRepo: Repository<CapitalPayment>,
+        @InjectRepository(LoanPayment)
+        private readonly loanPaymentRepo: Repository<LoanPayment>,
 
     ) { }
 
@@ -102,7 +105,15 @@ export class LoanPaymentService {
             await recalculateAmortization(dto.loanId, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo);
         }
 
-
+        // Registrar el pago en la tabla de pagos
+        const payment = this.loanPaymentRepo.create({
+            loan: { id: amortization.loanId },
+            isExtraPayment: extra > 0,
+            amortization: { id: amortization.id },
+            amountPaid: dto.amountPaid,
+            paymentDate: new Date(),
+        });
+        await this.loanPaymentRepo.save(payment);
 
         return {
             message: 'Pago registrado correctamente',
