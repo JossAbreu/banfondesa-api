@@ -68,9 +68,9 @@ export class LoanController {
         return this.loanService.registerPayment(dto);
     }
 
-    // // 8. Realizar abono a capital
-    // @Post('v1.0/loan/abono')
-    // makeAbono(@Body() dto: AbonoDto) {
-    //     return this.loanService.makeAbono(dto);
-    // }
+    // 8. Realizar abono a capital
+    @Post('v1.0/loan/abono')
+    registerAbono(@Body() dto: AbonoDto) {
+        return this.loanService.registerAbono(dto);
+    }
 }

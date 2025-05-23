@@ -32,7 +32,7 @@ export class LoanService {
         private readonly loanApprovalRepo: Repository<LoanApproval>,
     ) { }
 
-    async create(dto: CreateLoanDto): Promise<Loan> {
+    async create(dto: CreateLoanDto): Promise<{ message: string, loan: Loan }> {
         const client = await this.clientRepo.findOne({ where: { id: dto.clientId } });
         if (!client) {
             throw new NotFoundException('Cliente no encontrado');
@@ -55,7 +55,7 @@ export class LoanService {
             clientId: dto.clientId,
         });
 
-        return this.loanRepo.save(loan);
+        return { message: 'Préstamo creado correctamente', loan: await this.loanRepo.save(loan) };
     }
 
     async findAll() {
@@ -254,6 +254,40 @@ export class LoanService {
             throw new BadRequestException('Esta cuota ya ha sido pagada');
         }
 
+        // validar que no se dupliquen los pagos
+        const existingPayment = await this.loanAmortizationRepo.findOne({
+            where: {
+                loanId: dto.loanId,
+                installmentNumber: dto.installmentNumber,
+                paid: true,
+            },
+        });
+
+        if (existingPayment) {
+            throw new BadRequestException('Ya existe un pago registrado para esta cuota');
+        }
+
+
+        // Validar que el número de cuota corresponda al orden de pago
+        const lastPaidInstallment = await this.loanAmortizationRepo.findOne({
+            where: {
+                loanId: dto.loanId,
+                paid: true,
+            },
+            order: {
+                installmentNumber: 'DESC',
+            },
+        });
+
+        console.log('Ultima cuota pagada:', lastPaidInstallment);
+
+        if (dto.installmentNumber !== lastPaidInstallment?.installmentNumber) {
+            if (lastPaidInstallment) {
+                throw new BadRequestException('El número de cuota no corresponde al orden de pago la siguiente cuota es la ' + (lastPaidInstallment.installmentNumber + 1));
+            }
+
+        }
+
         // Validar que el monto sea suficiente
         if (dto.amountPaid < amortization.totalPayment) {
             throw new BadRequestException(
@@ -285,32 +319,19 @@ export class LoanService {
             await this.recalculateAmortization(dto.loanId);
         }
 
-        // Verificar si quedan cuotas pendientes
-        const pendingPayments = await this.loanAmortizationRepo.count({
-            where: {
-                loanId: dto.loanId,
-                paid: false,
-            },
-        });
 
-        if (pendingPayments === 0) {
-            const loan = await this.loanRepo.findOne({ where: { id: dto.loanId } });
-            if (loan) {
-                loan.status = 'pagado';
-                await this.loanRepo.save(loan);
-            }
-        }
 
         return {
             message: 'Pago registrado correctamente',
             extraPayment: extra > 0 ? extra.toFixed(2) : 0,
+            remainingBalance: await this.calculateRemainingBalance(dto.loanId),
         };
     }
     private async recalculateAmortization(loanId: number) {
         const loan = await this.loanRepo.findOne({ where: { id: loanId } });
         if (!loan) throw new NotFoundException('Préstamo no encontrado');
 
-        // Obtener todas las cuotas ya pagadas
+        // primero obtengo las cuatas pagadas
         const paidInstallments = await this.loanAmortizationRepo.find({
             where: { loanId, paid: true },
             order: { installmentNumber: 'ASC' }
@@ -318,27 +339,30 @@ export class LoanService {
 
         const lastPaidInstallment = paidInstallments.length;
 
-        // Calcular el nuevo capital pendiente
-        console.log('loanId:', loanId);
+
+        //luego obtengo el capital restante
         const remainingBalance = await this.calculateRemainingBalance(loanId);
 
-        // Obtener número de cuotas restantes
+        // Obtener número de cuotas restantes 
         const remainingTerm = loan.termMonths - lastPaidInstallment;
 
         if (remainingTerm <= 0) {
-            return; // Ya no hay cuotas por recalcular
+            // actualizar el estado del préstamo a 'pagado'
+            loan.status = 'pagado';
+            return; // salir si no hay cuotas restantes
+
         }
 
         // Generar nueva amortización para el capital restante
-        console.log('Capital restante:', remainingBalance);
-        console.log('Número de cuotas restantes:', remainingTerm);
+        // console.log('Capital restante:', remainingBalance);
+        // console.log('Número de cuotas restantes:', remainingTerm);
         const newAmortization = this.generateAmortization(
             remainingBalance,
             remainingTerm,
             loan.interestRate,
             loan.amortizationType as 'fija' | 'variable',
         );
-        console.log('Amortización recalculada:', newAmortization);
+        // console.log('Amortización recalculada:', newAmortization);
         // Eliminar solo las cuotas no pagadas
         await this.loanAmortizationRepo.delete({
             loanId,
@@ -364,7 +388,26 @@ export class LoanService {
                 paymentDate: null
             });
         }
+
+        //validar si las cuotas pendientes son 0 y si son son 0 cambiar el estado del préstamo a pagado y a las amortizaciones pagadas marcarlas pagadas
+        const pendingPayments = await this.loanAmortizationRepo.count({
+            where: { loanId, paid: false },
+        });
+
+        if (pendingPayments === 0) {
+            const loan = await this.loanRepo.findOne({ where: { id: loanId } });
+            if (loan) {
+                loan.status = 'pagado';
+                await this.loanRepo.save(loan);
+            }
+
+            await this.loanAmortizationRepo.update(
+                { loanId, paid: true },
+                { paymentDate: new Date() }
+            );
+        }
     }
+
     private async calculateRemainingBalance(loanId: number): Promise<number> {
         const loan = await this.loanRepo.findOne({ where: { id: loanId } });
         if (!loan) throw new NotFoundException('Préstamo no encontrado');
@@ -396,6 +439,29 @@ export class LoanService {
     }
 
 
+    //funcion para registrar un abono al capital
+    async registerAbono(dto: AbonoDto) {
+        //verificop si el monto es mayor a 0
+        if (dto.amount <= 0) {
+            throw new BadRequestException('El monto debe ser mayor a 0');
+        }
+        //verifico si el préstamo existe
+        const loan = await this.loanRepo.findOne({ where: { id: dto.loanId } });
+        if (!loan) throw new NotFoundException('Préstamo no encontrado');
 
-    // async registerAbono(dto: AbonoDto) { ... }
+        const capitalPayment = this.capitalPaymentRepo.create({
+            loan,
+            amount: dto.amount,
+        });
+        await this.capitalPaymentRepo.save(capitalPayment);
+
+        // Recalcular la amortización del préstamo
+        await this.recalculateAmortization(loan.id);
+
+        return {
+            message: 'Abono registrado correctamente',
+            remaining: await this.calculateRemainingBalance(loan.id),
+            capitalPayment: capitalPayment.amount,
+        };
+    }
 }
