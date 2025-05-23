@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { Loan } from '@loan/entities/loan.entity';
 import { LoanApproval } from '@loan/entities/loan-approval.entity';
 import { LoanAmortization } from '@loan/entities/loan-amortization.entity';
-import { ApproveLoanDto } from '@loan/dto/approve-loan.dto';
+import { ApproveOrRejectLoanDto } from '@loan/dto/approve-loan.dto';
 import { generateAmortization } from '@loan/utils/generateAmortization.util';
 import { calculateDueDate } from '@loan/utils/calculateDueDate.util';
 
@@ -24,7 +24,7 @@ export class LoanAprovalOrRejectService {
 
     ) { }
 
-    async approveOrReject(dto: ApproveLoanDto) {
+    async approveOrReject(dto: ApproveOrRejectLoanDto) {
         const loan = await this.loanRepo.findOne({ where: { id: dto.loanId } });
 
         if (!loan) throw new NotFoundException('Préstamo no encontrado');

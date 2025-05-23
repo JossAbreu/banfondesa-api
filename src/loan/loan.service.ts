@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Loan } from './entities/loan.entity';
 import { CreateLoanDto } from './dto/create-loan.dto';
-import { ApproveLoanDto } from './dto/approve-loan.dto';
+import { ApproveOrRejectLoanDto } from './dto/approve-loan.dto';
 import { AmortizationDto } from './dto/amortization.dto';
 import { PaymentDto } from './dto/payment.dto';
 import { AbonoDto } from './dto/abono.dto';
@@ -84,7 +84,7 @@ export class LoanService {
     }
 
     //metodo para aprobar o rechazar un préstamo
-    async approveOrReject(dto: ApproveLoanDto) {
+    async approveOrReject(dto: ApproveOrRejectLoanDto) {
         return this.loanApprovalOrRejectRepo.approveOrReject(dto);
     }
 
