@@ -27,7 +27,6 @@ export class LoanController {
     // 1. Crear préstamo
     @Post('v1.0/loan')
     createLoan(@Body() dto: CreateLoanDto) {
-        console.log('🔥 createLoan called', dto);
 
         return this.loanService.create(dto);
     }

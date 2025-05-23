@@ -12,7 +12,7 @@ export class CreateLoanDto {
 
     @IsInt()
     @Min(1, { message: 'el plazo no puede ser menor a 1 mes' })
-    @Max(12, { message: 'el plazo no puede ser mayor a 12 meses' })
+    @Max(60, { message: 'el plazo no puede ser mayor a 60 meses' })
     termMonths: number;
 
     @IsNumber()
