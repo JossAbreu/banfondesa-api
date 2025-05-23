@@ -9,13 +9,23 @@ async function bootstrap() {
 
   // Prefijo general de la API
   app.setGlobalPrefix('api');
-
   // Configuración de Swagger
   const config = new DocumentBuilder()
-    .setTitle('Banfondesa API')
-    .setDescription('Gestión de préstamos')
+    .setTitle('BANFONDESA API 📚')
+    .setDescription(`Desarrollar e implementar una API REST utilizando NestJS, asegurando autenticación con JWT,
+     documentación con Swagger y almacenamiento en una base de datos PostgreSQL. BY: Josue abreu de la rosa`)
+    .setContact('Banfondesa', 'https://banfondesa.com.do', 'info@banfondesa.com.do')
+    .setLicense('MIT', 'https://opensource.org/licenses/MIT')
     .setVersion('1.0')
-    .addBearerAuth() // Añade soporte para JWT en Swagger
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'JWT Authorization header using the Bearer scheme. Example: "Authorization: Bearer <access_token>"',
+
+      })
+
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
@@ -23,9 +33,9 @@ async function bootstrap() {
 
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true, // elimina propiedades no definidas en DTOs
-      forbidNonWhitelisted: true, // lanza error si se recibe una propiedad no permitida
-      transform: true, // convierte tipos (por ejemplo string a number si aplica)
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 

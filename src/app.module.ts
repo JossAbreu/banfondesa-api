@@ -2,9 +2,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-// importa aquí otros módulos como UserModule, LoanModule, etc.
-import { UserModule } from './user/user.module'; // Asegúrate de importar el módulo de usuario
-import { LoanModule } from '@loan/loan.module'; // Asegúrate de importar el módulo de usuario
+import { UserModule } from './user/user.module';
+import { LoanModule } from '@loan/loan.module';
 import { ClientsModule } from '@client/clients.module';
 
 
@@ -17,13 +16,13 @@ import { ClientsModule } from '@client/clients.module';
       username: 'postgres',
       password: 'Developer646588.',
       database: 'bafondesaDB',
-      autoLoadEntities: true, // automáticamente carga las entidades
-      synchronize: true, // ¡solo en desarrollo! crea/modifica tablas
+      autoLoadEntities: true,
+      synchronize: true,
     }),
     AuthModule,
     UserModule,
-    LoanModule,
     ClientsModule,
+    LoanModule,
   ],
 })
 export class AppModule { }

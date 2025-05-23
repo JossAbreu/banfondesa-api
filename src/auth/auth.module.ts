@@ -1,4 +1,4 @@
-// src/auth/auth.module.ts
+
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserModule } from '../user/user.module'; // Asegúrate de importar esto
@@ -8,12 +8,15 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
 
+
+
+
 @Module({
   imports: [
-    UserModule, // 👈 Necesario para que AuthService pueda usar UserService
+    UserModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'jwt-secret', // variable de entorno para mayor seguridad
+      secret: process.env.JWT_SECRET || 'jwt-secret',
       signOptions: { expiresIn: '1d' },
     }),
   ],
