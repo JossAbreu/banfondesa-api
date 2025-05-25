@@ -85,6 +85,15 @@ export class LoanPaymentService {
 
         const extra = dto.amountPaid - amortization.totalPayment;
 
+        const remainBalance = await calculateRemainingBalance(dto.loanId, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo);
+
+        if (extra > remainBalance) {
+            throw new BadRequestException('El monto extra no puede ser mayor al saldo restante del préstamo');
+        }
+
+
+
+
         // Marcar la cuota como pagada
         amortization.paid = true;
         amortization.paymentDate = new Date();
@@ -113,7 +122,12 @@ export class LoanPaymentService {
             amountPaid: dto.amountPaid,
             paymentDate: new Date(),
         });
+
+
+
         await this.loanPaymentRepo.save(payment);
+
+
 
         return {
             message: 'Pago registrado correctamente',
