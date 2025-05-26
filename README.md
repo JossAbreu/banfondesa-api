@@ -71,6 +71,7 @@ PORT=3000
 ## Nota 📝
 
 Puesdes buscar en la carpeta database ubicada en el proyecto y restaurar la base de datos basada en el template que te dejare.
+o puesdes ejecturar el sript que te dejare , cual se te sea mas facil. 
 
 ----
 # Paso numero 4 - **Crea y sincroniza las tablas con la base de datos:**
