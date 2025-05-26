@@ -12,7 +12,7 @@ import { Client } from '@client/entities/clients.entity';
 import { LoanAmortization } from '@/loan/entities/loan-amortization.entity';
 import { LoanPayment } from '@loan/entities/loan-payment.entity';
 import { CapitalPayment } from '@loan/entities/capital-payment.entity';
-import { LoanApproval } from '@loan/entities/loan-approval.entity';
+import { LoanDecisions } from '@/loan/entities/loan-decisions.entity';
 
 export type LoanStatus = 'pendiente' | 'aprobado' | 'rechazado' | 'pagado';
 
@@ -49,15 +49,18 @@ export class Loan {
     @Column({ type: 'timestamp', nullable: true })
     approvedAt: Date;
 
-    @OneToMany(() => LoanAmortization, (amort) => amort.loan)
+    @OneToMany(() => LoanAmortization, (amort) => amort.loan, { eager: true })
+    @JoinColumn({ name: 'loanId' })
     amortizations: LoanAmortization[];
 
-    @OneToMany(() => LoanPayment, (payment) => payment.loan)
+    @OneToMany(() => LoanPayment, (payment) => payment.loan, { eager: true })
     payments: LoanPayment[];
 
     @OneToMany(() => CapitalPayment, (abono) => abono.loan)
     capitalPayments: CapitalPayment[];
 
-    @OneToMany(() => LoanApproval, (approval) => approval.loan)
-    approvals: LoanApproval[];
+    @OneToMany(() => LoanDecisions, (decision) => decision.loan, { eager: true })
+    decisions: LoanDecisions[];
+
+
 }

@@ -1,4 +1,4 @@
-// src/loan/dto/approve-loan.dto.ts
+// src/loan/dto/approve-or-reject-loan.dto.ts
 
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';

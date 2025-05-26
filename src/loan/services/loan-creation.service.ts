@@ -26,12 +26,8 @@ export class LoanCreationService {
             throw new NotFoundException('Cliente no encontrado');
         }
 
-        // Verifica si el cliente ya tiene un préstamo pendiente
-        const existingLoan = await this.loanRepo.findOne({
-            where: { clientId: dto.clientId, status: 'pendiente' },
-        });
-        if (existingLoan) {
-            throw new BadRequestException('El cliente ya tiene un préstamo pendiente');
+        if (dto.amount <= 0) {
+            throw new BadRequestException('El monto del préstamo debe ser mayor a cero');
         }
 
 

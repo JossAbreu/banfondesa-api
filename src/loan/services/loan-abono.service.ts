@@ -28,13 +28,14 @@ export class LoanAbonoService {
         if (dto.amount <= 0) {
             throw new BadRequestException('El monto debe ser mayor a 0');
         }
-        //verifico si el préstamo existe
+        //verifico si el préstamo existeNo hay cuotas pendientes
         const loan = await this.loanRepo.findOne({ where: { id: dto.loanId } });
         if (!loan) throw new NotFoundException('Préstamo no encontrado');
 
         const capitalPayment = this.capitalPaymentRepo.create({
             loan,
             amount: dto.amount,
+            description: dto.description || 'Abono registrado',
         });
         await this.capitalPaymentRepo.save(capitalPayment);
 

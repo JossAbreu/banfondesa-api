@@ -7,16 +7,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Loan } from './entities/loan.entity';
 import { CreateLoanDto } from './dto/create-loan.dto';
-import { ApproveOrRejectLoanDto } from './dto/approve-loan.dto';
+import { ApproveOrRejectLoanDto } from './dto/approve-or-reject-loan.dto';
 import { AmortizationDto } from './dto/amortization.dto';
 import { PaymentDto } from './dto/payment.dto';
 import { AbonoDto } from './dto/abono.dto';
 import { LoanAmortization } from './entities/loan-amortization.entity'; // 
 import { CapitalPayment } from './entities/capital-payment.entity';
-import { LoanApproval } from './entities/loan-approval.entity';
+import { LoanDecisions } from './entities/loan-decisions.entity';
 import { Client } from '@/clients/entities/clients.entity';
 import { LoanCreationService } from '@loan/services/loan-creation.service';
-import { LoanAprovalOrRejectService } from '@loan/services/loan-aproval.service';
+import { LoanAprovalOrRejectService } from '@/loan/services/loan-aproval-or-reject.service';
 import { generateAmortization } from "@/loan/utils/generateAmortization.util"
 import { LoanPaymentService } from '@loan/services/loan-payment.service';
 import { LoanAbonoService } from '@loan/services/loan-abono.service';

@@ -1,4 +1,4 @@
-// src/entities/loan-approval.entity.ts
+// src/entities/loan-decisions.entity.ts
 
 import {
     Entity,
@@ -6,16 +6,19 @@ import {
     Column,
     ManyToOne,
     CreateDateColumn,
+    JoinColumn
 } from 'typeorm';
 import { Loan } from '@loan/entities/loan.entity';
 
-@Entity('loan_approvals')
-export class LoanApproval {
+@Entity('loan_decisions')
+export class LoanDecisions {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Loan, (loan) => loan.approvals, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Loan, (loan) => loan.decisions, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'loanId' })
     loan: Loan;
+
 
     @Column()
     approved: boolean;

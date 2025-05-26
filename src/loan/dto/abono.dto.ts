@@ -10,4 +10,8 @@ export class AbonoDto {
     @IsPositive({ message: 'El monto debe ser positivo por favor enviar el campo "amount"' })
     @ApiProperty({ description: 'Monto del abono', example: 100 })
     amount: number;
+
+    @IsEmpty()
+    @ApiProperty({ description: 'Descripción del abono', example: 'Abono mensual', required: false })
+    description?: string;
 }

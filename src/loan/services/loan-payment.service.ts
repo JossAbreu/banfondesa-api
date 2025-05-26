@@ -7,11 +7,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoanAmortization } from '@loan/entities/loan-amortization.entity';
 import { LoanPayment } from '@loan/entities/loan-payment.entity';
-import { recalculateAmortization, calculateRemainingBalance } from '@loan/utils/recalculateAmortization.util';
+import { calculateRemainingBalance } from '@loan/utils/recalculateAmortization.util';
 import { PaymentDto } from '@loan/dto/payment.dto';
 import { CapitalPayment } from '@loan/entities/capital-payment.entity';
 import { Loan } from '@loan/entities/loan.entity';
-
+import { LoanAbonoService } from '@loan/services/loan-abono.service';
 @Injectable()
 export class LoanPaymentService {
     constructor(
@@ -23,15 +23,28 @@ export class LoanPaymentService {
         private readonly capitalPaymentRepo: Repository<CapitalPayment>,
         @InjectRepository(LoanPayment)
         private readonly loanPaymentRepo: Repository<LoanPayment>,
-
+        private readonly loanAbonoService: LoanAbonoService,
     ) { }
 
     async registerPayment(dto: PaymentDto) {
+        const { loanId, installmentNumber, amountPaid } = dto;
+
+
+
+
+
+        const loan = await this.loanRepo.findOne({ where: { id: loanId } });
+        if (!loan) throw new NotFoundException('Préstamo no encontrado');
+
+        if (['pagado'].includes(loan.status)) {
+            throw new BadRequestException('El préstamo ya ha sido pagado');
+        }
+        if (loan.status !== 'aprobado') {
+            throw new BadRequestException('El préstamo no está aprobado');
+        }
+
         const amortization = await this.loanAmortizationRepo.findOne({
-            where: {
-                loanId: dto.loanId,
-                installmentNumber: dto.installmentNumber,
-            },
+            where: { loanId, installmentNumber },
         });
 
         if (!amortization) {
@@ -42,51 +55,35 @@ export class LoanPaymentService {
             throw new BadRequestException('Esta cuota ya ha sido pagada');
         }
 
-        // validar que no se dupliquen los pagos
-        const existingPayment = await this.loanAmortizationRepo.findOne({
-            where: {
-                loanId: dto.loanId,
-                installmentNumber: dto.installmentNumber,
-                paid: true,
-            },
+        const lastPaid = await this.loanAmortizationRepo.findOne({
+            where: { loanId, paid: true },
+            order: { installmentNumber: 'DESC' },
         });
 
-        if (existingPayment) {
-            throw new BadRequestException('Ya existe un pago registrado para esta cuota');
+        const expectedInstallment = (lastPaid?.installmentNumber || 0) + 1;
+
+        if (installmentNumber !== expectedInstallment) {
+            throw new BadRequestException(`El número de cuota a pagar (${installmentNumber}) no corresponde al siguiente pago (${expectedInstallment})`);
         }
 
-
-        // Validar que el número de cuota corresponda al orden de pago
-        const lastPaidInstallment = await this.loanAmortizationRepo.findOne({
-            where: {
-                loanId: dto.loanId,
-                paid: true,
-            },
-            order: {
-                installmentNumber: 'DESC',
-            },
-        }) || { installmentNumber: 0 };
-
-
-        const nextPayment = lastPaidInstallment.installmentNumber + 1;
-        console.log('nextPayment', nextPayment);
-        if (dto.installmentNumber !== nextPayment) {
-            throw new BadRequestException(
-                `El número de cuota a pagar (${dto.installmentNumber}) no corresponde al siguiente pago (${nextPayment})`,
-            );
+        if (amountPaid < amortization.totalPayment) {
+            throw new BadRequestException(`El monto pagado ($${amountPaid}) es menor que el total requerido ($${amortization.totalPayment})`);
         }
+        // Marcar cuota como pagada
+        amortization.paid = true;
+        amortization.paymentDate = new Date();
+        await this.loanAmortizationRepo.save(amortization);
 
-        // Validar que el monto sea suficiente
-        if (dto.amountPaid < amortization.totalPayment) {
-            throw new BadRequestException(
-                `El monto pagado ($${dto.amountPaid}) es menor que el total requerido ($${amortization.totalPayment})`,
-            );
-        }
 
-        const extra = dto.amountPaid - amortization.totalPayment;
 
-        const remainBalance = await calculateRemainingBalance(dto.loanId, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo);
-
+        const extra = amountPaid - amortization.totalPayment;
+        const remainBalance = await calculateRemainingBalance(
+            loanId,
+            this.loanRepo,
+            this.loanAmortizationRepo,
+            this.capitalPaymentRepo
+        );
+        console.log('Saldo restante:', remainBalance);
         if (extra > remainBalance) {
             throw new BadRequestException('El monto extra no puede ser mayor al saldo restante del préstamo');
         }
@@ -94,47 +91,40 @@ export class LoanPaymentService {
 
 
 
-        // Marcar la cuota como pagada
-        amortization.paid = true;
-        amortization.paymentDate = new Date();
-
-        await this.loanAmortizationRepo.save(amortization);
-
-        // ✅ Si hay monto extra, registrar abono al capital
+        let abono;
         if (extra > 0) {
-            const capitalPayment = this.capitalPaymentRepo.create({
-                loan: { id: amortization.loanId },
+            console.log('Registrando abono extra:', extra);
+            abono = await this.loanAbonoService.registerAbono({
+                loanId,
                 amount: extra,
-                paymentDate: new Date(),
-                description: `Abono extra del pago de la cuota #${dto.installmentNumber}`,
+                description: installmentNumber ? 'Abono registrado de la cuota numero ' + installmentNumber : 'Abono registrado',
             });
-            await this.capitalPaymentRepo.save(capitalPayment);
-
-            // 🧠 Reducir el capital del préstamo y recalcular cuotas
-            await recalculateAmortization(dto.loanId, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo);
         }
 
-        // Registrar el pago en la tabla de pagos
+
         const payment = this.loanPaymentRepo.create({
-            loan: { id: amortization.loanId },
+            loan: { id: loanId },
             isExtraPayment: extra > 0,
             amortization: { id: amortization.id },
-            amountPaid: dto.amountPaid,
+            amountPaid,
             paymentDate: new Date(),
         });
 
-
-
         await this.loanPaymentRepo.save(payment);
-
 
 
         return {
             message: 'Pago registrado correctamente',
             extraPayment: extra > 0 ? extra.toFixed(2) : 0,
-            remainingBalance: await calculateRemainingBalance(dto.loanId, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo),
+            remainingBalance: await calculateRemainingBalance(loanId, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo),
+            loanStatus: loan.status,
+            abonoDetails: extra > 0 ? {
+                message: 'Abono extra registrado correctamente',
+                details: abono,
+            } : null,
         };
     }
+
 
 
 }

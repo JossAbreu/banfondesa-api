@@ -6,19 +6,21 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Loan } from '@loan/entities/loan.entity';
-import { LoanApproval } from '@loan/entities/loan-approval.entity';
+import { LoanDecisions } from '@loan/entities/loan-decisions.entity';
 import { LoanAmortization } from '@loan/entities/loan-amortization.entity';
-import { ApproveOrRejectLoanDto } from '@loan/dto/approve-loan.dto';
+import { ApproveOrRejectLoanDto } from '@loan/dto/approve-or-reject-loan.dto';
 import { generateAmortization } from '@loan/utils/generateAmortization.util';
 import { calculateDueDate } from '@loan/utils/calculateDueDate.util';
+import { updateStatusLoan } from '@loan/utils/update.status.loan';
+
 
 @Injectable()
 export class LoanAprovalOrRejectService {
     constructor(
         @InjectRepository(Loan)
         private readonly loanRepo: Repository<Loan>,
-        @InjectRepository(LoanApproval)
-        private readonly loanApprovalRepo: Repository<LoanApproval>,
+        @InjectRepository(LoanDecisions)
+        private readonly loanDecisionsRepo: Repository<LoanDecisions>,
         @InjectRepository(LoanAmortization)
         private readonly loanAmortizationRepo: Repository<LoanAmortization>,
 
@@ -33,12 +35,19 @@ export class LoanAprovalOrRejectService {
             throw new BadRequestException('El préstamo ya ha sido procesado');
         }
 
+        //validar si tiene una desición previa
+        const previousDecision = await this.loanDecisionsRepo.findOne({ where: { loan: { id: dto.loanId } } });
+        if (previousDecision) {
+            throw new BadRequestException('El préstamo ya tiene una decisión previa');
+        }
+
+
         if (dto.approve) {
 
             const interest = dto.interestRate || loan.interestRate;
             loan.status = 'aprobado';
             loan.approvedAt = new Date();
-            loan.interestRate = interest; // Asigna la tasa de interés si no está definida
+            loan.interestRate = interest;
 
             await this.loanRepo.save(loan);
 
@@ -52,8 +61,8 @@ export class LoanAprovalOrRejectService {
             const startDate = new Date();
 
 
-            // Guardar la aprobación del préstamo
-            const approval = this.loanApprovalRepo.create({
+
+            const decision = this.loanDecisionsRepo.create({
                 loan,
                 approved: true,
                 decisionDate: new Date(),
@@ -61,7 +70,9 @@ export class LoanAprovalOrRejectService {
                 comment: dto.comment,
             });
 
-            await this.loanApprovalRepo.save(approval);
+
+
+            await this.loanDecisionsRepo.save(decision);
 
             for (const item of amortization) {
                 await this.loanAmortizationRepo.save({
@@ -78,6 +89,16 @@ export class LoanAprovalOrRejectService {
         } else {
             loan.status = 'rechazado';
             await this.loanRepo.save(loan);
+
+            const decision = this.loanDecisionsRepo.create({
+                loan,
+                approved: false,
+                decisionDate: new Date(),
+                reviewerName: dto.reviewerName,
+                comment: dto.comment,
+            });
+
+            await this.loanDecisionsRepo.save(decision);
         }
 
         return {
