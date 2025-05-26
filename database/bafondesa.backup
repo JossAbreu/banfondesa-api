@@ -5,7 +5,7 @@
 -- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.4
 
--- Started on 2025-05-22 17:50:33
+-- Started on 2025-05-26 16:37:58
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -56,7 +56,7 @@ CREATE SEQUENCE public.capital_payments_id_seq
 ALTER SEQUENCE public.capital_payments_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4872 (class 0 OID 0)
+-- TOC entry 4874 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: capital_payments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -97,7 +97,7 @@ CREATE SEQUENCE public.clients_id_seq
 ALTER SEQUENCE public.clients_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4873 (class 0 OID 0)
+-- TOC entry 4875 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: clients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -142,7 +142,7 @@ CREATE SEQUENCE public.loan_amortizations_id_seq
 ALTER SEQUENCE public.loan_amortizations_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4874 (class 0 OID 0)
+-- TOC entry 4876 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: loan_amortizations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -152,10 +152,10 @@ ALTER SEQUENCE public.loan_amortizations_id_seq OWNED BY public.loan_amortizatio
 
 --
 -- TOC entry 228 (class 1259 OID 17004)
--- Name: loan_approvals; Type: TABLE; Schema: public; Owner: postgres
+-- Name: loan_decisions; Type: TABLE; Schema: public; Owner: postgres
 --
 
-CREATE TABLE public.loan_approvals (
+CREATE TABLE public.loan_decisions (
     id integer NOT NULL,
     approved boolean NOT NULL,
     "decisionDate" timestamp without time zone DEFAULT now() NOT NULL,
@@ -165,7 +165,7 @@ CREATE TABLE public.loan_approvals (
 );
 
 
-ALTER TABLE public.loan_approvals OWNER TO postgres;
+ALTER TABLE public.loan_decisions OWNER TO postgres;
 
 --
 -- TOC entry 227 (class 1259 OID 17003)
@@ -184,12 +184,36 @@ CREATE SEQUENCE public.loan_approvals_id_seq
 ALTER SEQUENCE public.loan_approvals_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4875 (class 0 OID 0)
+-- TOC entry 4877 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: loan_approvals_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
-ALTER SEQUENCE public.loan_approvals_id_seq OWNED BY public.loan_approvals.id;
+ALTER SEQUENCE public.loan_approvals_id_seq OWNED BY public.loan_decisions.id;
+
+
+--
+-- TOC entry 231 (class 1259 OID 17306)
+-- Name: loan_decisions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.loan_decisions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.loan_decisions_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4878 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: loan_decisions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.loan_decisions_id_seq OWNED BY public.loan_decisions.id;
 
 
 --
@@ -226,7 +250,7 @@ CREATE SEQUENCE public.loan_payments_id_seq
 ALTER SEQUENCE public.loan_payments_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4876 (class 0 OID 0)
+-- TOC entry 4879 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: loan_payments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -271,7 +295,7 @@ CREATE SEQUENCE public.loans_id_seq
 ALTER SEQUENCE public.loans_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4877 (class 0 OID 0)
+-- TOC entry 4880 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: loans_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -311,7 +335,7 @@ CREATE SEQUENCE public.users_id_seq
 ALTER SEQUENCE public.users_id_seq OWNER TO postgres;
 
 --
--- TOC entry 4878 (class 0 OID 0)
+-- TOC entry 4881 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -320,7 +344,7 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- TOC entry 4681 (class 2604 OID 16992)
+-- TOC entry 4682 (class 2604 OID 16992)
 -- Name: capital_payments id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -328,7 +352,7 @@ ALTER TABLE ONLY public.capital_payments ALTER COLUMN id SET DEFAULT nextval('pu
 
 
 --
--- TOC entry 4685 (class 2604 OID 17059)
+-- TOC entry 4686 (class 2604 OID 17059)
 -- Name: clients id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -336,7 +360,7 @@ ALTER TABLE ONLY public.clients ALTER COLUMN id SET DEFAULT nextval('public.clie
 
 
 --
--- TOC entry 4676 (class 2604 OID 16960)
+-- TOC entry 4677 (class 2604 OID 16960)
 -- Name: loan_amortizations id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -344,15 +368,15 @@ ALTER TABLE ONLY public.loan_amortizations ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
--- TOC entry 4683 (class 2604 OID 17007)
--- Name: loan_approvals id; Type: DEFAULT; Schema: public; Owner: postgres
+-- TOC entry 4684 (class 2604 OID 17313)
+-- Name: loan_decisions id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.loan_approvals ALTER COLUMN id SET DEFAULT nextval('public.loan_approvals_id_seq'::regclass);
+ALTER TABLE ONLY public.loan_decisions ALTER COLUMN id SET DEFAULT nextval('public.loan_decisions_id_seq'::regclass);
 
 
 --
--- TOC entry 4678 (class 2604 OID 16973)
+-- TOC entry 4679 (class 2604 OID 16973)
 -- Name: loan_payments id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -360,7 +384,7 @@ ALTER TABLE ONLY public.loan_payments ALTER COLUMN id SET DEFAULT nextval('publi
 
 
 --
--- TOC entry 4673 (class 2604 OID 16945)
+-- TOC entry 4674 (class 2604 OID 16945)
 -- Name: loans id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -368,7 +392,7 @@ ALTER TABLE ONLY public.loans ALTER COLUMN id SET DEFAULT nextval('public.loans_
 
 
 --
--- TOC entry 4671 (class 2604 OID 16833)
+-- TOC entry 4672 (class 2604 OID 16833)
 -- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
@@ -376,31 +400,17 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
--- TOC entry 4862 (class 0 OID 16989)
+-- TOC entry 4863 (class 0 OID 16989)
 -- Dependencies: 226
 -- Data for Name: capital_payments; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.capital_payments (id, amount, description, "paymentDate", "loanId") FROM stdin;
-6	1000.00	Abono extra del pago de la cuota #2	2025-05-22	18
-7	1000.00	Abono extra del pago de la cuota #2	2025-05-22	19
-8	1000.00	Abono extra del pago de la cuota #1	2025-05-22	20
-9	1000.00	Abono extra del pago de la cuota #1	2025-05-22	21
-10	1000.00	Abono extra del pago de la cuota #2	2025-05-22	21
-11	1000.00	Abono extra del pago de la cuota #3	2025-05-22	21
-12	1000.00	Abono extra del pago de la cuota #4	2025-05-22	21
-13	1000.00	Abono extra del pago de la cuota #5	2025-05-22	21
-14	1000.00	Abono extra del pago de la cuota #6	2025-05-22	21
-15	1000.00	Abono extra del pago de la cuota #7	2025-05-22	21
-16	1000.00	Abono extra del pago de la cuota #8	2025-05-22	21
-17	1000.00	Abono extra del pago de la cuota #9	2025-05-22	21
-18	4060.20	Abono extra del pago de la cuota #10	2025-05-22	21
-19	9884.88	Abono extra del pago de la cuota #11	2025-05-22	21
 \.
 
 
 --
--- TOC entry 4866 (class 0 OID 17056)
+-- TOC entry 4867 (class 0 OID 17056)
 -- Dependencies: 230
 -- Data for Name: clients; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -411,87 +421,27 @@ COPY public.clients (id, name, last_name, email, phone) FROM stdin;
 
 
 --
--- TOC entry 4858 (class 0 OID 16957)
+-- TOC entry 4859 (class 0 OID 16957)
 -- Dependencies: 222
 -- Data for Name: loan_amortizations; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.loan_amortizations (id, principal, interest, paid, "installmentNumber", "totalPayment", "loanId", "dueDate", "paymentDate") FROM stdin;
-132	8205.04	679.84	t	5	8884.88	21	2025-10-22 17:24:18.489	2025-05-22 17:39:53.153
-133	8287.09	597.79	t	6	8884.88	21	2025-11-22 17:24:18.489	2025-05-22 17:41:44.936
-134	8369.96	514.92	t	7	8884.88	21	2025-12-22 17:24:18.489	2025-05-22 17:43:19.141
-135	8453.66	431.22	t	8	8884.88	21	2026-01-22 17:24:18.489	2025-05-22 17:45:21.408
-136	8538.19	346.68	t	9	8884.88	21	2026-02-22 17:24:18.489	2025-05-22 17:46:47.572
-140	5653.38	171.3	t	10	5824.68	21	2026-03-22 17:46:47.635	2025-05-22 17:47:33.589
-27	7884.88	1000	t	1	8884.88	17	2025-06-22 17:01:17.061	2025-05-22 17:02:24.124
-39	NaN	NaN	f	2	NaN	17	2025-06-22 17:02:24.149	\N
-40	NaN	NaN	f	3	NaN	17	2025-07-22 17:02:24.149	\N
-41	NaN	NaN	f	4	NaN	17	2025-08-22 17:02:24.149	\N
-42	NaN	NaN	f	5	NaN	17	2025-09-22 17:02:24.149	\N
-43	NaN	NaN	f	6	NaN	17	2025-10-22 17:02:24.149	\N
-44	NaN	NaN	f	7	NaN	17	2025-11-22 17:02:24.149	\N
-45	NaN	NaN	f	8	NaN	17	2025-12-22 17:02:24.149	\N
-46	NaN	NaN	f	9	NaN	17	2026-01-22 17:02:24.149	\N
-47	NaN	NaN	f	10	NaN	17	2026-02-22 17:02:24.149	\N
-48	NaN	NaN	f	11	NaN	17	2026-03-22 17:02:24.149	\N
-49	NaN	NaN	f	12	NaN	17	2026-04-22 17:02:24.149	\N
-143	0	0	t	11	0	21	2026-04-22 17:47:33.617	2025-05-22 17:47:58.014
-145	0	0	f	12	0	21	2026-05-22 17:47:58.042	\N
-50	7884.88	1000	t	1	8884.88	18	2025-06-22 17:03:53.984	2025-05-22 17:09:19.745
-62	7963.73	921.15	t	2	8884.88	18	2025-07-22 17:09:19.782	2025-05-22 17:11:46.424
-73	NaN	NaN	f	3	NaN	18	2025-08-22 17:11:46.461	\N
-74	NaN	NaN	f	4	NaN	18	2025-09-22 17:11:46.461	\N
-75	NaN	NaN	f	5	NaN	18	2025-10-22 17:11:46.461	\N
-76	NaN	NaN	f	6	NaN	18	2025-11-22 17:11:46.461	\N
-77	NaN	NaN	f	7	NaN	18	2025-12-22 17:11:46.461	\N
-78	NaN	NaN	f	8	NaN	18	2026-01-22 17:11:46.461	\N
-79	NaN	NaN	f	9	NaN	18	2026-02-22 17:11:46.461	\N
-80	NaN	NaN	f	10	NaN	18	2026-03-22 17:11:46.461	\N
-81	NaN	NaN	f	11	NaN	18	2026-04-22 17:11:46.461	\N
-82	NaN	NaN	f	12	NaN	18	2026-05-22 17:11:46.461	\N
-83	7884.88	1000	t	1	8884.88	19	2025-06-22 17:16:28.41	2025-05-22 17:16:53.47
-84	7963.73	921.15	t	2	8884.88	19	2025-07-22 17:16:28.41	2025-05-22 17:17:29.338
-97	NaN	NaN	f	5	NaN	19	2025-10-22 17:17:29.363	\N
-98	NaN	NaN	f	6	NaN	19	2025-11-22 17:17:29.363	\N
-99	NaN	NaN	f	7	NaN	19	2025-12-22 17:17:29.363	\N
-100	NaN	NaN	f	8	NaN	19	2026-01-22 17:17:29.363	\N
-101	NaN	NaN	f	9	NaN	19	2026-02-22 17:17:29.363	\N
-102	NaN	NaN	f	10	NaN	19	2026-03-22 17:17:29.363	\N
-103	NaN	NaN	f	11	NaN	19	2026-04-22 17:17:29.363	\N
-104	NaN	NaN	f	12	NaN	19	2026-05-22 17:17:29.363	\N
-95	NaN	NaN	t	3	NaN	19	2025-08-22 17:17:29.363	2025-05-22 17:20:51.957
-96	NaN	NaN	t	4	NaN	19	2025-09-22 17:17:29.363	2025-05-22 17:21:18.801
-105	7884.88	1000	t	1	8884.88	20	2025-06-22 17:22:10.498	2025-05-22 17:22:22.981
-117	NaN	NaN	f	2	NaN	20	2025-07-22 17:22:23.02	\N
-118	NaN	NaN	f	3	NaN	20	2025-08-22 17:22:23.02	\N
-119	NaN	NaN	f	4	NaN	20	2025-09-22 17:22:23.02	\N
-120	NaN	NaN	f	5	NaN	20	2025-10-22 17:22:23.02	\N
-121	NaN	NaN	f	6	NaN	20	2025-11-22 17:22:23.02	\N
-122	NaN	NaN	f	7	NaN	20	2025-12-22 17:22:23.02	\N
-123	NaN	NaN	f	8	NaN	20	2026-01-22 17:22:23.02	\N
-124	NaN	NaN	f	9	NaN	20	2026-02-22 17:22:23.02	\N
-125	NaN	NaN	f	10	NaN	20	2026-03-22 17:22:23.02	\N
-126	NaN	NaN	f	11	NaN	20	2026-04-22 17:22:23.02	\N
-127	NaN	NaN	f	12	NaN	20	2026-05-22 17:22:23.02	\N
-128	7884.88	1000	t	1	8884.88	21	2025-06-22 17:24:18.489	2025-05-22 17:25:07.675
-129	7963.73	921.15	t	2	8884.88	21	2025-07-22 17:24:18.489	2025-05-22 17:26:34.789
-130	8043.36	841.51	t	3	8884.88	21	2025-08-22 17:24:18.489	2025-05-22 17:27:36.941
-131	8123.8	761.08	t	4	8884.88	21	2025-09-22 17:24:18.489	2025-05-22 17:31:24.857
 \.
 
 
 --
--- TOC entry 4864 (class 0 OID 17004)
+-- TOC entry 4865 (class 0 OID 17004)
 -- Dependencies: 228
--- Data for Name: loan_approvals; Type: TABLE DATA; Schema: public; Owner: postgres
+-- Data for Name: loan_decisions; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.loan_approvals (id, approved, "decisionDate", "reviewerName", comment, "loanId") FROM stdin;
+COPY public.loan_decisions (id, approved, "decisionDate", "reviewerName", comment, "loanId") FROM stdin;
 \.
 
 
 --
--- TOC entry 4860 (class 0 OID 16970)
+-- TOC entry 4861 (class 0 OID 16970)
 -- Dependencies: 224
 -- Data for Name: loan_payments; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -501,22 +451,17 @@ COPY public.loan_payments (id, "amountPaid", "paymentDate", "isExtraPayment", "l
 
 
 --
--- TOC entry 4856 (class 0 OID 16942)
+-- TOC entry 4857 (class 0 OID 16942)
 -- Dependencies: 220
 -- Data for Name: loans; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.loans (id, amount, "termMonths", "interestRate", "amortizationType", "createdAt", "approvedAt", "clientId", status) FROM stdin;
-17	100000.00	12	0.12	fija	2025-05-22 16:57:58.708545	2025-05-22 17:01:17.048	1	aprobado
-18	100000.00	12	0.12	fija	2025-05-22 17:03:35.634129	2025-05-22 17:03:53.976	1	aprobado
-19	100000.00	12	0.12	fija	2025-05-22 17:16:21.570983	2025-05-22 17:16:28.401	1	aprobado
-20	100000.00	12	0.12	fija	2025-05-22 17:21:51.476498	2025-05-22 17:22:10.489	1	aprobado
-21	100000.00	12	0.12	fija	2025-05-22 17:24:12.208768	2025-05-22 17:24:18.477	1	aprobado
 \.
 
 
 --
--- TOC entry 4854 (class 0 OID 16830)
+-- TOC entry 4855 (class 0 OID 16830)
 -- Dependencies: 218
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -528,16 +473,16 @@ COPY public.users (id, username, password, status) FROM stdin;
 
 
 --
--- TOC entry 4879 (class 0 OID 0)
+-- TOC entry 4882 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: capital_payments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.capital_payments_id_seq', 19, true);
+SELECT pg_catalog.setval('public.capital_payments_id_seq', 1, false);
 
 
 --
--- TOC entry 4880 (class 0 OID 0)
+-- TOC entry 4883 (class 0 OID 0)
 -- Dependencies: 229
 -- Name: clients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -546,16 +491,16 @@ SELECT pg_catalog.setval('public.clients_id_seq', 1, true);
 
 
 --
--- TOC entry 4881 (class 0 OID 0)
+-- TOC entry 4884 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: loan_amortizations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.loan_amortizations_id_seq', 145, true);
+SELECT pg_catalog.setval('public.loan_amortizations_id_seq', 1, false);
 
 
 --
--- TOC entry 4882 (class 0 OID 0)
+-- TOC entry 4885 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: loan_approvals_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -564,7 +509,16 @@ SELECT pg_catalog.setval('public.loan_approvals_id_seq', 1, false);
 
 
 --
--- TOC entry 4883 (class 0 OID 0)
+-- TOC entry 4886 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: loan_decisions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.loan_decisions_id_seq', 1, false);
+
+
+--
+-- TOC entry 4887 (class 0 OID 0)
 -- Dependencies: 223
 -- Name: loan_payments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -573,16 +527,16 @@ SELECT pg_catalog.setval('public.loan_payments_id_seq', 1, false);
 
 
 --
--- TOC entry 4884 (class 0 OID 0)
+-- TOC entry 4888 (class 0 OID 0)
 -- Dependencies: 219
 -- Name: loans_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.loans_id_seq', 21, true);
+SELECT pg_catalog.setval('public.loans_id_seq', 1, false);
 
 
 --
--- TOC entry 4885 (class 0 OID 0)
+-- TOC entry 4889 (class 0 OID 0)
 -- Dependencies: 217
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -591,16 +545,16 @@ SELECT pg_catalog.setval('public.users_id_seq', 4, true);
 
 
 --
--- TOC entry 4699 (class 2606 OID 17012)
--- Name: loan_approvals PK_3444dfb8484ad3286153aeabd71; Type: CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4700 (class 2606 OID 17012)
+-- Name: loan_decisions PK_3444dfb8484ad3286153aeabd71; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.loan_approvals
+ALTER TABLE ONLY public.loan_decisions
     ADD CONSTRAINT "PK_3444dfb8484ad3286153aeabd71" PRIMARY KEY (id);
 
 
 --
--- TOC entry 4687 (class 2606 OID 16843)
+-- TOC entry 4688 (class 2606 OID 16843)
 -- Name: users UQ_fe0bb3f6520ee0469504521e710; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -609,7 +563,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 4697 (class 2606 OID 16997)
+-- TOC entry 4698 (class 2606 OID 16997)
 -- Name: capital_payments capital_payments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -618,7 +572,7 @@ ALTER TABLE ONLY public.capital_payments
 
 
 --
--- TOC entry 4701 (class 2606 OID 17064)
+-- TOC entry 4702 (class 2606 OID 17064)
 -- Name: clients clients_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -627,7 +581,7 @@ ALTER TABLE ONLY public.clients
 
 
 --
--- TOC entry 4693 (class 2606 OID 16963)
+-- TOC entry 4694 (class 2606 OID 16963)
 -- Name: loan_amortizations loan_amortizations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -636,7 +590,7 @@ ALTER TABLE ONLY public.loan_amortizations
 
 
 --
--- TOC entry 4695 (class 2606 OID 16977)
+-- TOC entry 4696 (class 2606 OID 16977)
 -- Name: loan_payments loan_payments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -645,7 +599,7 @@ ALTER TABLE ONLY public.loan_payments
 
 
 --
--- TOC entry 4691 (class 2606 OID 16950)
+-- TOC entry 4692 (class 2606 OID 16950)
 -- Name: loans loans_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -654,7 +608,7 @@ ALTER TABLE ONLY public.loans
 
 
 --
--- TOC entry 4689 (class 2606 OID 16837)
+-- TOC entry 4690 (class 2606 OID 16837)
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -663,7 +617,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 4703 (class 2606 OID 17050)
+-- TOC entry 4704 (class 2606 OID 17050)
 -- Name: loan_amortizations FK_3c62dc80abc08d0af16a05fabe5; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -672,16 +626,16 @@ ALTER TABLE ONLY public.loan_amortizations
 
 
 --
--- TOC entry 4707 (class 2606 OID 17038)
--- Name: loan_approvals FK_5b1703c77f4bbecacf7b40e7bab; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+-- TOC entry 4708 (class 2606 OID 17308)
+-- Name: loan_decisions FK_97327cab29519a668a54f6ce1b2; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
-ALTER TABLE ONLY public.loan_approvals
-    ADD CONSTRAINT "FK_5b1703c77f4bbecacf7b40e7bab" FOREIGN KEY ("loanId") REFERENCES public.loans(id) ON DELETE CASCADE;
+ALTER TABLE ONLY public.loan_decisions
+    ADD CONSTRAINT "FK_97327cab29519a668a54f6ce1b2" FOREIGN KEY ("loanId") REFERENCES public.loans(id) ON DELETE CASCADE;
 
 
 --
--- TOC entry 4704 (class 2606 OID 17028)
+-- TOC entry 4705 (class 2606 OID 17028)
 -- Name: loan_payments FK_9d68470fec8d4fd2b3c70e15e48; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -690,7 +644,7 @@ ALTER TABLE ONLY public.loan_payments
 
 
 --
--- TOC entry 4702 (class 2606 OID 17085)
+-- TOC entry 4703 (class 2606 OID 17085)
 -- Name: loans FK_a04f985bb1203a1e90a89ee9c6b; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -699,7 +653,7 @@ ALTER TABLE ONLY public.loans
 
 
 --
--- TOC entry 4705 (class 2606 OID 17023)
+-- TOC entry 4706 (class 2606 OID 17023)
 -- Name: loan_payments FK_c0268488cc84d23c1e5c6c1910d; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -708,7 +662,7 @@ ALTER TABLE ONLY public.loan_payments
 
 
 --
--- TOC entry 4706 (class 2606 OID 17033)
+-- TOC entry 4707 (class 2606 OID 17033)
 -- Name: capital_payments FK_ef1f0771d2d6b459f80aa686cbe; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -716,7 +670,7 @@ ALTER TABLE ONLY public.capital_payments
     ADD CONSTRAINT "FK_ef1f0771d2d6b459f80aa686cbe" FOREIGN KEY ("loanId") REFERENCES public.loans(id) ON DELETE CASCADE;
 
 
--- Completed on 2025-05-22 17:50:33
+-- Completed on 2025-05-26 16:37:58
 
 --
 -- PostgreSQL database dump complete
