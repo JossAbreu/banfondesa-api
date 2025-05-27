@@ -60,12 +60,16 @@ luego ajusta tu archivo .env copiado
 
 
 ```
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=postgres
-DB_PASSWORD=tu_password
-DB_NAME=loans_db
-PORT=3000
+#  APP CONFIG
+JWT_SECRET= "" # e.g., "your_jwt_secret"
+
+
+#  DATABASE CONFIG
+DB_HOST= ""  # e.g., "localhost" or "db"
+DB_PORT= "" # e.g., "5432"
+DB_USER= "" # e.g., "postgres"
+DB_PASSWORD= "."     # e.g., "user"
+DB_NAME= "" # e.g., "database_name"
 ```
 
 ## Nota 📝
