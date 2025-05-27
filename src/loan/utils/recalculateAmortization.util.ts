@@ -16,89 +16,96 @@ export async function recalculateAmortization(
     loanAmortizationRepo: Repository<LoanAmortization>,
     capitalPaymentRepo: Repository<CapitalPayment>
 ) {
-    const loan = await loanRepo.findOne({ where: { id: loanId } });
-    if (!loan) throw new NotFoundException('Préstamo no encontrado');
+    try {
+        const loan = await loanRepo.findOne({ where: { id: loanId } });
+        if (!loan) throw new NotFoundException('Préstamo no encontrado');
 
-    const paidInstallments = await loanAmortizationRepo.find({
-        where: { loanId, paid: true },
-        order: { installmentNumber: 'ASC' },
-    });
-
-    const lastPaidInstallment = paidInstallments.length;
-    const remainingBalance = await calculateRemainingBalance(loanId, loanRepo, loanAmortizationRepo, capitalPaymentRepo);
-    console.log('Saldo restante:', remainingBalance);
-    if (remainingBalance <= 0) {
-        await loanAmortizationRepo.update(
-            { loanId, paid: false },
-            {
-                paid: true,
-                principal: 0,
-                interest: 0,
-                totalPayment: 0,
-                paymentDate: new Date(),
-            }
-        );
-
-        loan.status = 'pagado';
-        await loanRepo.save(loan);
-        return;
-    }
-
-    const remainingTerm = loan.termMonths - lastPaidInstallment;
-    if (remainingTerm <= 0) {
-        loan.status = 'pagado';
-        await loanRepo.save(loan);
-        return;
-    }
-
-    const newAmortization = await generateAmortization(
-        remainingBalance,
-        remainingTerm,
-        loan.interestRate,
-        loan.amortizationType as 'fija' | 'variable'
-    );
-
-    // Elimina las amortizaciones pendientes para recalcular
-    console.log('Eliminando amortizaciones pendientes para recalcular...', loanId);
-    await loanAmortizationRepo.delete({ loanId, paid: false });
-
-
-
-    const startDate = new Date();
-    for (let i = 0; i < newAmortization.length; i++) {
-        const item = newAmortization[i];
-        await loanAmortizationRepo.save({
-            loanId,
-            installmentNumber: lastPaidInstallment + 1 + i,
-            dueDate: calculateDueDate(startDate, lastPaidInstallment + 1 + i),
-            principal: item.principal,
-            interest: item.interest,
-            totalPayment: item.total,
-            paid: false,
-            paymentDate: null,
+        const paidInstallments = await loanAmortizationRepo.find({
+            where: { loanId, paid: true },
+            order: { installmentNumber: 'ASC' },
         });
-    }
 
-
-    // si el balance permaneciente es 0, marcar las amortizaciones pendientes como pagadas
-    const remainingBalanceAfterRecalculation = await calculateRemainingBalance(loanId, loanRepo, loanAmortizationRepo, capitalPaymentRepo);
-    if (remainingBalanceAfterRecalculation <= 0) {
-        await loanAmortizationRepo.update(
-            { loanId, paid: false },
-            {
-                paid: true,
-                principal: 0,
-                interest: 0,
-                totalPayment: 0,
-                paymentDate: new Date(),
-            }
+        const lastPaidInstallment = paidInstallments.length;
+        const remainingBalance = await calculateRemainingBalance(
+            loanId, loanRepo, loanAmortizationRepo, capitalPaymentRepo
         );
 
-        loan.status = 'pagado';
-        await loanRepo.save(loan);
+        console.log('Saldo restante:', remainingBalance);
+
+        if (remainingBalance <= 0) {
+            await loanAmortizationRepo.update(
+                { loanId, paid: false },
+                {
+                    paid: true,
+                    principal: 0,
+                    interest: 0,
+                    totalPayment: 0,
+                    paymentDate: new Date(),
+                }
+            );
+
+            loan.status = 'pagado';
+            await loanRepo.save(loan);
+            return;
+        }
+
+        const remainingTerm = loan.termMonths - lastPaidInstallment;
+        if (remainingTerm <= 0) {
+            loan.status = 'pagado';
+            await loanRepo.save(loan);
+            return;
+        }
+
+        const newAmortization = await generateAmortization(
+            remainingBalance,
+            remainingTerm,
+            loan.interestRate,
+            loan.amortizationType as 'fija' | 'variable'
+        );
+
+        await loanAmortizationRepo.delete({ loanId, paid: false });
+
+        const startDate = new Date();
+        await Promise.all(newAmortization.map((item, i) =>
+            loanAmortizationRepo.save(
+                loanAmortizationRepo.create({
+                    loan, // <- agrega aquí la relación completa
+                    loanId, // también puedes dejar esto por claridad
+                    installmentNumber: lastPaidInstallment + 1 + i,
+                    dueDate: calculateDueDate(startDate, lastPaidInstallment + 1 + i),
+                    principal: item.principal,
+                    interest: item.interest,
+                    totalPayment: item.total,
+                    paid: false,
+                    paymentDate: null,
+                })
+            )
+        ));
+
+        const remainingBalanceAfter = await calculateRemainingBalance(
+            loanId, loanRepo, loanAmortizationRepo, capitalPaymentRepo
+        );
+
+        if (remainingBalanceAfter <= 0) {
+            await loanAmortizationRepo.update(
+                { loanId, paid: false },
+                {
+                    paid: true,
+                    principal: 0,
+                    interest: 0,
+                    totalPayment: 0,
+                    paymentDate: new Date(),
+                }
+            );
+
+            loan.status = 'pagado';
+            await loanRepo.save(loan);
+        }
+
+    } catch (error) {
+        console.error('Error al recalcular amortización:', error);
+        throw error; // o lanza un InternalServerErrorException si quieres personalizarlo
     }
-
-
 }
 
 
@@ -116,7 +123,7 @@ export async function calculateRemainingBalance(loanId: number, loanRepo: Reposi
 
     // Si no hay amortizaciones pendientes, significa que el préstamo ya ha sido pagado
     if (!amortizations || amortizations.length === 0) {
-        throw new NotFoundException('No hay cuotas pendientes ,el prestamos ya ha sido pagado');
+        return 0;
     }
 
     // También considera los abonos extras al capital

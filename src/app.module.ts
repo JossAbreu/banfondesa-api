@@ -8,6 +8,7 @@ import { ClientsModule } from '@client/clients.module';
 import { ConfigModule } from '@nestjs/config';
 
 
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,6 +28,7 @@ import { ConfigModule } from '@nestjs/config';
     UserModule,
     ClientsModule,
     LoanModule,
+
   ],
 
 })

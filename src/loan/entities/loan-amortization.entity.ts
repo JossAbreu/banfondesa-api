@@ -5,6 +5,7 @@ import {
     PrimaryGeneratedColumn,
     Column,
     ManyToOne,
+    JoinColumn
 } from 'typeorm';
 import { Loan } from './loan.entity';
 
@@ -34,7 +35,8 @@ export class LoanAmortization {
     @Column({ type: 'timestamp', nullable: true })
     paymentDate: Date | null;
 
-    @ManyToOne(() => Loan, loan => loan.amortizations)
+    @ManyToOne(() => Loan, (loan) => loan.amortizations, { nullable: false })
+    @JoinColumn({ name: 'loanId' })
     loan: Loan;
 
     @Column()

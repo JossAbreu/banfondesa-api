@@ -12,6 +12,7 @@ import { PaymentDto } from '@loan/dto/payment.dto';
 import { CapitalPayment } from '@loan/entities/capital-payment.entity';
 import { Loan } from '@loan/entities/loan.entity';
 import { LoanAbonoService } from '@loan/services/loan-abono.service';
+
 @Injectable()
 export class LoanPaymentService {
     constructor(
@@ -28,7 +29,7 @@ export class LoanPaymentService {
 
     async registerPayment(dto: PaymentDto) {
 
-        const { loanId, installmentNumber, amountPaid } = dto;
+        const { loanId, amountPaid } = dto;
 
         const loan = await this.loanRepo.findOne({ where: { id: loanId } });
         if (!loan) throw new NotFoundException('Préstamo no encontrado');
@@ -40,8 +41,19 @@ export class LoanPaymentService {
             throw new BadRequestException('El préstamo no está aprobado');
         }
 
+        const lastPaid = await this.loanAmortizationRepo.findOne({
+            where: { loanId, paid: true },
+            order: { installmentNumber: 'DESC' },
+        });
+
+        console.log('Última cuota pagada:', lastPaid); //FIXME remove this line in production
+
+
+
+        const nextInstallment = lastPaid ? (lastPaid.installmentNumber || 0) + 1 : 1;
+        console.log('Siguiente cuota:', nextInstallment); //FIXME remove this line in production
         const amortization = await this.loanAmortizationRepo.findOne({
-            where: { loanId, installmentNumber },
+            where: { loanId, installmentNumber: nextInstallment },
         });
 
         if (!amortization) {
@@ -52,27 +64,11 @@ export class LoanPaymentService {
             throw new BadRequestException('Esta cuota ya ha sido pagada');
         }
 
-        const lastPaid = await this.loanAmortizationRepo.findOne({
-            where: { loanId, paid: true },
-            order: { installmentNumber: 'DESC' },
-        });
 
-        const expectedInstallment = (lastPaid?.installmentNumber || 0) + 1;
-
-        if (installmentNumber !== expectedInstallment) {
-            throw new BadRequestException(`El número de cuota a pagar (${installmentNumber}) no corresponde al siguiente pago (${expectedInstallment})`);
-        }
 
         if (amountPaid < amortization.totalPayment) {
             throw new BadRequestException(`El monto pagado ($${amountPaid}) es menor que el total requerido ($${amortization.totalPayment})`);
         }
-
-
-        // Marcar cuota como pagada
-        amortization.paid = true;
-        amortization.paymentDate = new Date();
-        await this.loanAmortizationRepo.save(amortization);
-
 
 
         const extra = amountPaid - amortization.totalPayment;
@@ -84,18 +80,26 @@ export class LoanPaymentService {
             this.loanAmortizationRepo,
             this.capitalPaymentRepo
         );
-        //console.log('Saldo restante:', remainBalance);
+        console.log('Saldo restante:', remainBalance);
         if (extra > remainBalance) {
             throw new BadRequestException('El monto extra no puede ser mayor al saldo restante del préstamo');
         }
 
+        // Marcar cuota como pagada
+        amortization.paid = true;
+        amortization.paymentDate = new Date();
+        await this.loanAmortizationRepo.save(amortization);
+
+
+
+        //TODO: Tipar el abono extra correctamente
         let abono;
         if (extra > 0) {
-            console.log('Registrando abono extra:', extra);
+            console.log('Registrando abono extra:', extra); //FIXME remove this line in production
             abono = await this.loanAbonoService.registerAbono({
                 loanId,
                 amount: extra,
-                description: installmentNumber ? 'Abono registrado de la cuota numero ' + installmentNumber : 'Abono registrado',
+                description: nextInstallment ? 'Abono registrado de la cuota numero ' + nextInstallment : 'Abono registrado',
             });
         }
 
@@ -113,12 +117,11 @@ export class LoanPaymentService {
 
         return {
             message: 'Pago registrado correctamente',
-            extraPayment: extra > 0 ? extra.toFixed(2) : 0,
             remainingBalance: await calculateRemainingBalance(loanId, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo),
             loanStatus: loan.status,
-            abonoDetails: extra > 0 ? {
-                message: 'Abono extra registrado correctamente',
-                details: abono,
+            extraPayment: extra > 0 ? {
+                amount: extra.toFixed(2),
+                ...abono,
             } : null,
         };
     }

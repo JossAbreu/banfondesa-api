@@ -43,7 +43,7 @@ export class LoanAbonoService {
         await recalculateAmortization(loan.id, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo);
 
         return {
-            message: 'Abono registrado correctamente',
+            message: dto.description || 'Abono registrado exitosamente',
             remaining: await calculateRemainingBalance(loan.id, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo),
             capitalPayment: capitalPayment.amount,
         };

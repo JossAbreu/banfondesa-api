@@ -1,7 +1,5 @@
-// src/user/dto/create-user.dto.ts
+//src/clients/dto/create-client.dto.ts
 import { IsString } from 'class-validator';
-
-
 import { ApiProperty } from '@nestjs/swagger';
 export class CreateClientDto {
     @ApiProperty({ description: 'Nombre del cliente ', example: 'Miguel', format: 'string' })

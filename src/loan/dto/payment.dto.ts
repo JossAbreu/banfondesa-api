@@ -6,9 +6,6 @@ export class PaymentDto {
     @ApiProperty({ description: 'ID del préstamo', example: 1 })
     loanId: number;
 
-    @IsInt()
-    @ApiProperty({ description: 'Número de cuota', example: 1 })
-    installmentNumber: number;
 
     @IsNumber()
     @IsPositive()
