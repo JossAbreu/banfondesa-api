@@ -1,68 +1,29 @@
-// src/user/user.service.ts
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
-import * as bcrypt from 'bcrypt';
+import { CreateUserDto } from '@user/dto/create-user.dto';
+import { UpdateUserDto } from '@user/dto/update-user.dto';
+import { User } from '@user/entities/user.entity';
+import { CrearUserService } from '@user/services/crear-user.service';
+import { UpdateUserService } from '@user/services/update-user.service';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
         private userRepo: Repository<User>,
+        private crearUserRepo: CrearUserService,
+        private updateUserRepo: UpdateUserService,
     ) { }
 
     async create(createUserDto: CreateUserDto): Promise<User> {
-
-
-        const existingUser = await this.userRepo.findOne({
-            where: { username: createUserDto.username },
-        });
-
-        // Verifica si el usuario ya existe
-        if (existingUser) {
-            throw new BadRequestException('Usuario ya existe');
-        }
-        const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
-        const user = this.userRepo.create({
-            username: createUserDto.username,
-            password: hashedPassword,
-        });
-        return this.userRepo.save(user);
+        return this.crearUserRepo.create(createUserDto);
     }
 
     async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-        const user = await this.userRepo.findOne({ where: { id } });
+        return this.updateUserRepo.updateUser(id, updateUserDto);
 
-        if (!user) {
-            throw new NotFoundException('Usuario no encontrado');
-        }
-
-        // Validar si se quiere actualizar el nombre de usuario a uno ya existente
-        if (updateUserDto.username) {
-            const existing = await this.userRepo.findOne({
-                where: { username: updateUserDto.username },
-            });
-
-
-            // Si ya existe ese username y pertenece a otro usuario
-            if (existing && existing.id !== user.id) {
-                throw new BadRequestException('El nombre de usuario ya está en uso');
-            }
-
-            user.username = updateUserDto.username;
-        }
-        if (updateUserDto.status) {
-            user.status = updateUserDto.status;
-        }
-
-        if (typeof updateUserDto.status === 'boolean') {
-            user.status = updateUserDto.status;
-        }
-
-        return this.userRepo.save(user);
     }
 
     async findByUsername(username: string): Promise<User | null> {

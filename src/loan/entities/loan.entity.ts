@@ -56,7 +56,7 @@ export class Loan {
     @OneToMany(() => LoanPayment, (payment) => payment.loan, { eager: true })
     payments: LoanPayment[];
 
-    @OneToMany(() => CapitalPayment, (abono) => abono.loan)
+    @OneToMany(() => CapitalPayment, (abono) => abono.loan, { eager: true })
     capitalPayments: CapitalPayment[];
 
     @OneToMany(() => LoanDecisions, (decision) => decision.loan, { eager: true })

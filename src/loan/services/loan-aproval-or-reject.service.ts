@@ -60,8 +60,6 @@ export class LoanAprovalOrRejectService {
 
             const startDate = new Date();
 
-
-
             const decision = this.loanDecisionsRepo.create({
                 loan,
                 approved: true,
@@ -69,8 +67,6 @@ export class LoanAprovalOrRejectService {
                 reviewerName: dto.reviewerName,
                 comment: dto.comment,
             });
-
-
 
             await this.loanDecisionsRepo.save(decision);
 

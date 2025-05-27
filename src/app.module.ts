@@ -5,10 +5,14 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { LoanModule } from '@loan/loan.module';
 import { ClientsModule } from '@client/clients.module';
+import { ConfigModule } from '@nestjs/config';
 
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
@@ -24,5 +28,6 @@ import { ClientsModule } from '@client/clients.module';
     ClientsModule,
     LoanModule,
   ],
+
 })
 export class AppModule { }

@@ -27,11 +27,8 @@ export class LoanPaymentService {
     ) { }
 
     async registerPayment(dto: PaymentDto) {
+
         const { loanId, installmentNumber, amountPaid } = dto;
-
-
-
-
 
         const loan = await this.loanRepo.findOne({ where: { id: loanId } });
         if (!loan) throw new NotFoundException('Préstamo no encontrado');
@@ -69,6 +66,8 @@ export class LoanPaymentService {
         if (amountPaid < amortization.totalPayment) {
             throw new BadRequestException(`El monto pagado ($${amountPaid}) es menor que el total requerido ($${amortization.totalPayment})`);
         }
+
+
         // Marcar cuota como pagada
         amortization.paid = true;
         amortization.paymentDate = new Date();
@@ -77,19 +76,18 @@ export class LoanPaymentService {
 
 
         const extra = amountPaid - amortization.totalPayment;
+
+        // console.log('Monto extra:', extra);
         const remainBalance = await calculateRemainingBalance(
             loanId,
             this.loanRepo,
             this.loanAmortizationRepo,
             this.capitalPaymentRepo
         );
-        console.log('Saldo restante:', remainBalance);
+        //console.log('Saldo restante:', remainBalance);
         if (extra > remainBalance) {
             throw new BadRequestException('El monto extra no puede ser mayor al saldo restante del préstamo');
         }
-
-
-
 
         let abono;
         if (extra > 0) {

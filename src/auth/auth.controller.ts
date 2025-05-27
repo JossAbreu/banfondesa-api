@@ -3,7 +3,7 @@ import { Controller, Post, Request, UseGuards, Get, Body } from '@nestjs/common'
 import { AuthService } from '@auth/auth.service';
 import { JwtAuthGuard } from '@auth/guards/jwt.guard';
 import { LoginDto } from '@auth/dto/login.dto';
-import { ApiResponse, ApiTags, ApiOperation } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { DocLogin, DocGetProfile } from '@auth/docs/auth.docs';
 
 @ApiTags('Autenticación 🔐')
