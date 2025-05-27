@@ -14,6 +14,8 @@ Esta API gestiona el ciclo de vida de préstamos (loans), incluyendo clientes, p
 
 -  <a href='http://localhost:3000/api-docs' target='_blank' >Ir a la documentacion </a>
 
+ Nota: ⚠
+- El proyecto tiene que estar en ejecucion para mostrarte la documentacion.
 ---
 
 ## 🚀 Características
@@ -38,7 +40,7 @@ Esta API gestiona el ciclo de vida de préstamos (loans), incluyendo clientes, p
 
 ## ⚙️ Instalación
 
- Paso numero 1 **Clona el repositorio**
+## Paso numero 1 **Clona el repositorio**
 
 ```bash
 git clone https://github.com/tu-usuario/tu-repo-api-loans.git
@@ -46,7 +48,7 @@ cd banfondesa-api
 ``` 
 ---
 
-# Paso numero 2 -  **Instala las despendicias**
+## Paso numero 2 -  **Instala las despendicias**
 ```bash
 npm install
 ```
@@ -78,11 +80,6 @@ DB_PASSWORD= "."     # e.g., "user"
 DB_NAME= "" # e.g., "database_name"
 ```
 
-## Nota 📝
-
-Puesdes buscar en la carpeta database ubicada en el proyecto y restaurar la base de datos basada en el template que te dejare.
-o puesdes ejecturar el script que te dejare , cual se te sea mas facil. 
-
 ----
 # Paso numero 4 - **Crea y sincroniza las tablas con la base de datos:**
 
@@ -91,3 +88,12 @@ npm run start:dev
 # o
 yarn start:dev
 ```
+----
+
+##  Notas adicionales 📌
+
+- Puedes buscar en la carpeta database ubicada en el proyecto y restaurar la base de datos basada en el template que te dejare.
+o puesdes ejecturar el script que te dejare , cual se te sea mas facil.
+
+- Se recomienda usar herramientas como ``Postman`` o ``Insomnia`` para probar la API.
+Asegúrate de que PostgreSQL esté corriendo antes de iniciar la aplicación.
