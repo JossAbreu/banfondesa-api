@@ -13,12 +13,12 @@ import { ApproveOrRejectLoanDto } from './dto/approve-or-reject-loan.dto';
 import { AmortizationDto } from './dto/amortization.dto';
 import { PaymentDto } from './dto/payment.dto';
 import { AbonoDto } from '@loan/dto/abono.dto';
-import { GetUser } from '@auth/decorators/get-user.decorator';
-import { User } from '@user/entities/user.entity';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { DocCreateLoan, DocGetAllLoans, DocGetLoanById, DocGetLoanWithAmortization, DocApproveOrRejectLoan, DocCalculateAmortization, DocRegisterPayment, DocRegisterAbono } from '@loan/docs/loan.docs';
 
 @ApiTags('Prestamos')
+@ApiBearerAuth('access-token')
 @Controller()
 @UseGuards(JwtAuthGuard)
 export class LoanController {

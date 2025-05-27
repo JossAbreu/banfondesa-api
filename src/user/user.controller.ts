@@ -4,11 +4,12 @@ import { UserService } from '@user/user.service';
 import { JwtAuthGuard } from '@auth/guards/jwt.guard';
 import { CreateUserDto } from '@user/dto/create-user.dto';
 import { UpdateUserDto } from '@user/dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { DocCreateUser, DocUpdateUser, DocFindAllUsers } from "@user/docs/user.docs"
 
 
 @ApiTags('Usuarios 👥')
+@ApiBearerAuth('access-token')
 @UseGuards(JwtAuthGuard)
 @Controller('v1.0/user')
 export class UserController {

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Put, UseGuards, Param } from '@nestjs/common';
 import { ClientsService } from '@client/clients.service';
 import { JwtAuthGuard } from '@auth/guards/jwt.guard';
-import { ApiBadRequestResponse, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { CreateClientDto } from '@client/dto/create-client.dto';
 import { UpdateClientDto } from '@client/dto/update-client.dto';
 import { DocCreateClient, DocUpdateClient, DocFindAllClients } from '@client/docs/clients.docs';
@@ -9,6 +9,7 @@ import { DocCreateClient, DocUpdateClient, DocFindAllClients } from '@client/doc
 
 @ApiTags('Clientes 👤')
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth('access-token')
 @Controller('v1.0/client')
 export class ClientsController {
 
