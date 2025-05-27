@@ -10,6 +10,12 @@ Esta API gestiona el ciclo de vida de préstamos (loans), incluyendo clientes, p
 
 ---
 
+## DOCUMENTACION  API 📓
+
+-  <a href='http://localhost:3000/api-docs' target='_blank' >Ir a la documentacion </a>
+
+---
+
 ## 🚀 Características
 
 - 📋 Registro y consulta de clientes.
