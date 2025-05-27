@@ -32,7 +32,7 @@ Esta API gestiona el ciclo de vida de préstamos (loans), incluyendo clientes, p
 
 ## ⚙️ Instalación
 
- Paso numero 1 **Clona el repositorio**
+ Paso numero 1 **Clona el repositorio** 📄
 
 ```bash
 git clone https://github.com/tu-usuario/tu-repo-api-loans.git
@@ -40,16 +40,16 @@ cd banfondesa-api
 ``` 
 ---
 
-# Paso numero 2 -  **Instala las despendicias**
+## Paso numero 2 -  **Instala las despendicias** ✨
 ```bash
-npm install
+pnpm install
 ```
-# o si usas yarn
+ O si usas yarn
 ```bash
 yarn install
 ```
 
-# Paso numero 3 - **Configura tu base de datos**
+## Paso numero 3 - **Configura tu base de datos** ⚙
 
 Copia el archivo de ejemplo y edita los valores
 
@@ -78,7 +78,7 @@ Puesdes buscar en la carpeta database ubicada en el proyecto y restaurar la base
 o puesdes ejecturar el script que te dejare , cual se te sea mas facil. 
 
 ----
-# Paso numero 4 - **Crea y sincroniza las tablas con la base de datos:**
+## Paso numero 4 - **Crea y sincroniza las tablas con la base de datos:**
 
 ```bash
 npm run start:dev
