@@ -5,7 +5,7 @@
 -- Dumped from database version 17.4
 -- Dumped by pg_dump version 17.4
 
--- Started on 2025-05-26 17:04:31
+-- Started on 2025-05-27 15:18:49
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -468,7 +468,7 @@ COPY public.loans (id, amount, "termMonths", "interestRate", "amortizationType",
 
 COPY public.users (id, username, password, status) FROM stdin;
 4	user	$2b$10$bQCkc2aGuz0oFAaCx7R4xO40svphWM1dXGNUmvTyTauTfKo66bAYK	t
-1	kiko	$2b$10$BfOSLabLBis2.BLqz6jCwu6uoMQeZpPeaoKBjv1CuPt1lPVcFqS8u	t
+1	miguel	$2b$10$BfOSLabLBis2.BLqz6jCwu6uoMQeZpPeaoKBjv1CuPt1lPVcFqS8u	t
 \.
 
 
@@ -617,15 +617,6 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 4704 (class 2606 OID 17050)
--- Name: loan_amortizations FK_3c62dc80abc08d0af16a05fabe5; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.loan_amortizations
-    ADD CONSTRAINT "FK_3c62dc80abc08d0af16a05fabe5" FOREIGN KEY ("loanId") REFERENCES public.loans(id);
-
-
---
 -- TOC entry 4708 (class 2606 OID 17308)
 -- Name: loan_decisions FK_97327cab29519a668a54f6ce1b2; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
@@ -635,30 +626,21 @@ ALTER TABLE ONLY public.loan_decisions
 
 
 --
--- TOC entry 4705 (class 2606 OID 17028)
--- Name: loan_payments FK_9d68470fec8d4fd2b3c70e15e48; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.loan_payments
-    ADD CONSTRAINT "FK_9d68470fec8d4fd2b3c70e15e48" FOREIGN KEY ("amortizationId") REFERENCES public.loan_amortizations(id);
-
-
---
--- TOC entry 4703 (class 2606 OID 17085)
--- Name: loans FK_a04f985bb1203a1e90a89ee9c6b; Type: FK CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public.loans
-    ADD CONSTRAINT "FK_a04f985bb1203a1e90a89ee9c6b" FOREIGN KEY ("clientId") REFERENCES public.clients(id);
-
-
---
--- TOC entry 4706 (class 2606 OID 17023)
+-- TOC entry 4705 (class 2606 OID 17023)
 -- Name: loan_payments FK_c0268488cc84d23c1e5c6c1910d; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.loan_payments
     ADD CONSTRAINT "FK_c0268488cc84d23c1e5c6c1910d" FOREIGN KEY ("loanId") REFERENCES public.loans(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4703 (class 2606 OID 17425)
+-- Name: loans FK_clients_loans; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loans
+    ADD CONSTRAINT "FK_clients_loans" FOREIGN KEY ("clientId") REFERENCES public.clients(id) ON DELETE CASCADE NOT VALID;
 
 
 --
@@ -670,7 +652,25 @@ ALTER TABLE ONLY public.capital_payments
     ADD CONSTRAINT "FK_ef1f0771d2d6b459f80aa686cbe" FOREIGN KEY ("loanId") REFERENCES public.loans(id) ON DELETE CASCADE;
 
 
--- Completed on 2025-05-26 17:04:31
+--
+-- TOC entry 4704 (class 2606 OID 17420)
+-- Name: loan_amortizations FK_loan; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_amortizations
+    ADD CONSTRAINT "FK_loan" FOREIGN KEY ("loanId") REFERENCES public.loans(id) ON DELETE CASCADE NOT VALID;
+
+
+--
+-- TOC entry 4706 (class 2606 OID 17430)
+-- Name: loan_payments FK_loan_amortizacion; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_payments
+    ADD CONSTRAINT "FK_loan_amortizacion" FOREIGN KEY ("amortizationId") REFERENCES public.loan_amortizations(id) ON DELETE CASCADE NOT VALID;
+
+
+-- Completed on 2025-05-27 15:18:49
 
 --
 -- PostgreSQL database dump complete
