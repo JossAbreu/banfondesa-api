@@ -1,0 +1,678 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 17.5
+-- Dumped by pg_dump version 17.5
+
+-- Started on 2025-05-27 22:34:39
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- TOC entry 217 (class 1259 OID 16692)
+-- Name: capital_payments; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.capital_payments (
+    id integer NOT NULL,
+    amount numeric(12,2) NOT NULL,
+    description text,
+    "paymentDate" date DEFAULT ('now'::text)::date NOT NULL,
+    "loanId" integer NOT NULL
+);
+
+
+ALTER TABLE public.capital_payments OWNER TO postgres;
+
+--
+-- TOC entry 218 (class 1259 OID 16698)
+-- Name: capital_payments_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.capital_payments_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.capital_payments_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4975 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: capital_payments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.capital_payments_id_seq OWNED BY public.capital_payments.id;
+
+
+--
+-- TOC entry 219 (class 1259 OID 16699)
+-- Name: clients; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.clients (
+    id integer NOT NULL,
+    name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    email character varying NOT NULL,
+    phone character varying NOT NULL
+);
+
+
+ALTER TABLE public.clients OWNER TO postgres;
+
+--
+-- TOC entry 220 (class 1259 OID 16704)
+-- Name: clients_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.clients_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.clients_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4976 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: clients_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.clients_id_seq OWNED BY public.clients.id;
+
+
+--
+-- TOC entry 221 (class 1259 OID 16705)
+-- Name: loan_amortizations; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.loan_amortizations (
+    id integer NOT NULL,
+    principal numeric NOT NULL,
+    interest numeric NOT NULL,
+    paid boolean DEFAULT false NOT NULL,
+    "installmentNumber" integer NOT NULL,
+    "totalPayment" numeric NOT NULL,
+    "loanId" integer NOT NULL,
+    "dueDate" timestamp without time zone NOT NULL,
+    "paymentDate" timestamp without time zone
+);
+
+
+ALTER TABLE public.loan_amortizations OWNER TO postgres;
+
+--
+-- TOC entry 222 (class 1259 OID 16711)
+-- Name: loan_amortizations_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.loan_amortizations_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.loan_amortizations_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4977 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: loan_amortizations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.loan_amortizations_id_seq OWNED BY public.loan_amortizations.id;
+
+
+--
+-- TOC entry 223 (class 1259 OID 16712)
+-- Name: loan_decisions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.loan_decisions (
+    id integer NOT NULL,
+    approved boolean NOT NULL,
+    "decisionDate" timestamp without time zone DEFAULT now() NOT NULL,
+    "reviewerName" character varying,
+    comment text,
+    "loanId" integer
+);
+
+
+ALTER TABLE public.loan_decisions OWNER TO postgres;
+
+--
+-- TOC entry 224 (class 1259 OID 16718)
+-- Name: loan_approvals_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.loan_approvals_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.loan_approvals_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4978 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: loan_approvals_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.loan_approvals_id_seq OWNED BY public.loan_decisions.id;
+
+
+--
+-- TOC entry 225 (class 1259 OID 16719)
+-- Name: loan_decisions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.loan_decisions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.loan_decisions_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4979 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: loan_decisions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.loan_decisions_id_seq OWNED BY public.loan_decisions.id;
+
+
+--
+-- TOC entry 226 (class 1259 OID 16720)
+-- Name: loan_payments; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.loan_payments (
+    id integer NOT NULL,
+    "amountPaid" numeric(12,2) NOT NULL,
+    "paymentDate" date DEFAULT ('now'::text)::date NOT NULL,
+    "isExtraPayment" boolean DEFAULT false NOT NULL,
+    "loanId" integer,
+    "amortizationId" integer
+);
+
+
+ALTER TABLE public.loan_payments OWNER TO postgres;
+
+--
+-- TOC entry 227 (class 1259 OID 16725)
+-- Name: loan_payments_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.loan_payments_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.loan_payments_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4980 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: loan_payments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.loan_payments_id_seq OWNED BY public.loan_payments.id;
+
+
+--
+-- TOC entry 228 (class 1259 OID 16726)
+-- Name: loans; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.loans (
+    id integer NOT NULL,
+    amount numeric(12,2) NOT NULL,
+    "termMonths" integer NOT NULL,
+    "interestRate" numeric(5,2) NOT NULL,
+    "amortizationType" character varying(20) NOT NULL,
+    "createdAt" timestamp without time zone DEFAULT now() NOT NULL,
+    "approvedAt" timestamp without time zone,
+    "clientId" integer NOT NULL,
+    status character varying(20) DEFAULT 'pendiente'::character varying NOT NULL
+);
+
+
+ALTER TABLE public.loans OWNER TO postgres;
+
+--
+-- TOC entry 229 (class 1259 OID 16731)
+-- Name: loans_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.loans_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.loans_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4981 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: loans_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.loans_id_seq OWNED BY public.loans.id;
+
+
+--
+-- TOC entry 230 (class 1259 OID 16732)
+-- Name: users; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    username character varying NOT NULL,
+    password character varying NOT NULL,
+    status boolean DEFAULT true NOT NULL
+);
+
+
+ALTER TABLE public.users OWNER TO postgres;
+
+--
+-- TOC entry 231 (class 1259 OID 16738)
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.users_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 4982 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
+-- TOC entry 4773 (class 2604 OID 16739)
+-- Name: capital_payments id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.capital_payments ALTER COLUMN id SET DEFAULT nextval('public.capital_payments_id_seq'::regclass);
+
+
+--
+-- TOC entry 4775 (class 2604 OID 16740)
+-- Name: clients id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.clients ALTER COLUMN id SET DEFAULT nextval('public.clients_id_seq'::regclass);
+
+
+--
+-- TOC entry 4776 (class 2604 OID 16741)
+-- Name: loan_amortizations id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_amortizations ALTER COLUMN id SET DEFAULT nextval('public.loan_amortizations_id_seq'::regclass);
+
+
+--
+-- TOC entry 4778 (class 2604 OID 16742)
+-- Name: loan_decisions id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_decisions ALTER COLUMN id SET DEFAULT nextval('public.loan_decisions_id_seq'::regclass);
+
+
+--
+-- TOC entry 4780 (class 2604 OID 16743)
+-- Name: loan_payments id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_payments ALTER COLUMN id SET DEFAULT nextval('public.loan_payments_id_seq'::regclass);
+
+
+--
+-- TOC entry 4783 (class 2604 OID 16744)
+-- Name: loans id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loans ALTER COLUMN id SET DEFAULT nextval('public.loans_id_seq'::regclass);
+
+
+--
+-- TOC entry 4786 (class 2604 OID 16745)
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
+-- TOC entry 4955 (class 0 OID 16692)
+-- Dependencies: 217
+-- Data for Name: capital_payments; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.capital_payments (id, amount, description, "paymentDate", "loanId") FROM stdin;
+\.
+
+
+--
+-- TOC entry 4957 (class 0 OID 16699)
+-- Dependencies: 219
+-- Data for Name: clients; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.clients (id, name, last_name, email, phone) FROM stdin;
+1	Miguel	abreu	pedro@gmail.com	9087654352
+\.
+
+
+--
+-- TOC entry 4959 (class 0 OID 16705)
+-- Dependencies: 221
+-- Data for Name: loan_amortizations; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.loan_amortizations (id, principal, interest, paid, "installmentNumber", "totalPayment", "loanId", "dueDate", "paymentDate") FROM stdin;
+\.
+
+
+--
+-- TOC entry 4961 (class 0 OID 16712)
+-- Dependencies: 223
+-- Data for Name: loan_decisions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.loan_decisions (id, approved, "decisionDate", "reviewerName", comment, "loanId") FROM stdin;
+\.
+
+
+--
+-- TOC entry 4964 (class 0 OID 16720)
+-- Dependencies: 226
+-- Data for Name: loan_payments; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.loan_payments (id, "amountPaid", "paymentDate", "isExtraPayment", "loanId", "amortizationId") FROM stdin;
+\.
+
+
+--
+-- TOC entry 4966 (class 0 OID 16726)
+-- Dependencies: 228
+-- Data for Name: loans; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.loans (id, amount, "termMonths", "interestRate", "amortizationType", "createdAt", "approvedAt", "clientId", status) FROM stdin;
+\.
+
+
+--
+-- TOC entry 4968 (class 0 OID 16732)
+-- Dependencies: 230
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.users (id, username, password, status) FROM stdin;
+4	user	$2b$10$bQCkc2aGuz0oFAaCx7R4xO40svphWM1dXGNUmvTyTauTfKo66bAYK	t
+1	miguel	$2b$10$BfOSLabLBis2.BLqz6jCwu6uoMQeZpPeaoKBjv1CuPt1lPVcFqS8u	t
+\.
+
+
+--
+-- TOC entry 4983 (class 0 OID 0)
+-- Dependencies: 218
+-- Name: capital_payments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.capital_payments_id_seq', 1, false);
+
+
+--
+-- TOC entry 4984 (class 0 OID 0)
+-- Dependencies: 220
+-- Name: clients_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.clients_id_seq', 1, true);
+
+
+--
+-- TOC entry 4985 (class 0 OID 0)
+-- Dependencies: 222
+-- Name: loan_amortizations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.loan_amortizations_id_seq', 1, false);
+
+
+--
+-- TOC entry 4986 (class 0 OID 0)
+-- Dependencies: 224
+-- Name: loan_approvals_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.loan_approvals_id_seq', 1, false);
+
+
+--
+-- TOC entry 4987 (class 0 OID 0)
+-- Dependencies: 225
+-- Name: loan_decisions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.loan_decisions_id_seq', 1, false);
+
+
+--
+-- TOC entry 4988 (class 0 OID 0)
+-- Dependencies: 227
+-- Name: loan_payments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.loan_payments_id_seq', 1, false);
+
+
+--
+-- TOC entry 4989 (class 0 OID 0)
+-- Dependencies: 229
+-- Name: loans_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.loans_id_seq', 1, false);
+
+
+--
+-- TOC entry 4990 (class 0 OID 0)
+-- Dependencies: 231
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 4, true);
+
+
+--
+-- TOC entry 4795 (class 2606 OID 16747)
+-- Name: loan_decisions PK_3444dfb8484ad3286153aeabd71; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_decisions
+    ADD CONSTRAINT "PK_3444dfb8484ad3286153aeabd71" PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4801 (class 2606 OID 16749)
+-- Name: users UQ_fe0bb3f6520ee0469504521e710; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT "UQ_fe0bb3f6520ee0469504521e710" UNIQUE (username);
+
+
+--
+-- TOC entry 4789 (class 2606 OID 16751)
+-- Name: capital_payments capital_payments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.capital_payments
+    ADD CONSTRAINT capital_payments_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4791 (class 2606 OID 16753)
+-- Name: clients clients_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.clients
+    ADD CONSTRAINT clients_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4793 (class 2606 OID 16755)
+-- Name: loan_amortizations loan_amortizations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_amortizations
+    ADD CONSTRAINT loan_amortizations_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4797 (class 2606 OID 16757)
+-- Name: loan_payments loan_payments_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_payments
+    ADD CONSTRAINT loan_payments_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4799 (class 2606 OID 16759)
+-- Name: loans loans_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loans
+    ADD CONSTRAINT loans_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4803 (class 2606 OID 16761)
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 4805 (class 2606 OID 16762)
+-- Name: loan_amortizations FK_3c62dc80abc08d0af16a05fabe5; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_amortizations
+    ADD CONSTRAINT "FK_3c62dc80abc08d0af16a05fabe5" FOREIGN KEY ("loanId") REFERENCES public.loans(id);
+
+
+--
+-- TOC entry 4806 (class 2606 OID 16767)
+-- Name: loan_decisions FK_97327cab29519a668a54f6ce1b2; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_decisions
+    ADD CONSTRAINT "FK_97327cab29519a668a54f6ce1b2" FOREIGN KEY ("loanId") REFERENCES public.loans(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4807 (class 2606 OID 16772)
+-- Name: loan_payments FK_9d68470fec8d4fd2b3c70e15e48; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_payments
+    ADD CONSTRAINT "FK_9d68470fec8d4fd2b3c70e15e48" FOREIGN KEY ("amortizationId") REFERENCES public.loan_amortizations(id);
+
+
+--
+-- TOC entry 4809 (class 2606 OID 16777)
+-- Name: loans FK_a04f985bb1203a1e90a89ee9c6b; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loans
+    ADD CONSTRAINT "FK_a04f985bb1203a1e90a89ee9c6b" FOREIGN KEY ("clientId") REFERENCES public.clients(id);
+
+
+--
+-- TOC entry 4808 (class 2606 OID 16782)
+-- Name: loan_payments FK_c0268488cc84d23c1e5c6c1910d; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.loan_payments
+    ADD CONSTRAINT "FK_c0268488cc84d23c1e5c6c1910d" FOREIGN KEY ("loanId") REFERENCES public.loans(id) ON DELETE CASCADE;
+
+
+--
+-- TOC entry 4804 (class 2606 OID 16787)
+-- Name: capital_payments FK_ef1f0771d2d6b459f80aa686cbe; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.capital_payments
+    ADD CONSTRAINT "FK_ef1f0771d2d6b459f80aa686cbe" FOREIGN KEY ("loanId") REFERENCES public.loans(id) ON DELETE CASCADE;
+
+
+-- Completed on 2025-05-27 22:34:39
+
+--
+-- PostgreSQL database dump complete
+--
+
