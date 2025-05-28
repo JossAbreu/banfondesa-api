@@ -9,13 +9,19 @@
 Esta API gestiona el ciclo de vida de préstamos (loans), incluyendo clientes, pagos, decisiones de aprobación y amortizaciones. Construida con **NestJS**, **TypeORM**, y **PostgreSQL**.
 
 ---
+## Hosting 
+
+
+ <a href='https://banfondesa-api-production.up.railway.app/api/v1.0/user' target='_blank' >Enlace </a>
+
 
 ## DOCUMENTACION  API 📓
 
--  <a href='http://localhost:3000/api-docs' target='_blank' >Ir a la documentacion </a>
+-  <a href='https://banfondesa-api-production.up.railway.app/api-docs' target='_blank' >Ir a la documentacion publica </a>
+-  <a href='http://localhost:3000/api-docs' target='_blank' >Ir a la documentacion local </a>
 
  Nota: ⚠
-- El proyecto tiene que estar en ejecucion para mostrarte la documentacion.
+- El proyecto tiene que estar en ejecucion para mostrarte la documentacion LOCAL.
 ---
 
 ## 🚀 Características
