@@ -27,6 +27,7 @@ export function DocUpdateUser() {
         ApiOperation({ summary: 'Actualizar un usuario existente ✏️' }),
         ApiResponse({ status: 200, description: 'Usuario actualizado correctamente', type: UpdateUserDto }),
         ApiResponse({ status: 404, description: 'Usuario no encontrado' }),
+        ApiResponse({ status: 401, description: 'No autorizado' }),
         ApiResponse({ status: 400, description: 'Datos inválidos para actualización' }),
     );
 }

@@ -13,6 +13,7 @@ export function DocCreateClient() {
     return applyDecorators(
         ApiOperation({ summary: 'Crear un nuevo cliente 👤' }),
         ApiResponse({ status: 201, description: 'Cliente creado exitosamente', type: CreateClientDto }),
+        ApiResponse({ status: 401, description: 'No autorizado' }),
         ApiResponse({ status: 404, description: 'Cliente no encontrado' }),
         ApiBadRequestResponse({ description: 'El cliente ya existe' }),
     );
@@ -22,6 +23,7 @@ export function DocUpdateClient() {
     return applyDecorators(
         ApiOperation({ summary: 'Actualizar un cliente 📋' }),
         ApiResponse({ status: 200, description: 'Cliente actualizado exitosamente', type: UpdateClientDto }),
+        ApiResponse({ status: 401, description: 'No autorizado' }),
         ApiResponse({ status: 404, description: 'Cliente no encontrado' }),
         ApiBadRequestResponse({ description: 'El cliente ya existe' }),
         ApiParam({ name: 'id', description: 'ID del cliente a actualizar' }),
@@ -32,6 +34,7 @@ export function DocFindAllClients() {
     return applyDecorators(
         ApiOperation({ summary: 'Obtener lista de clientes 👀' }),
         ApiResponse({ status: 200, description: 'Clientes Registrados', type: [CreateClientDto] }),
+        ApiResponse({ status: 401, description: 'No autorizado' }),
         ApiResponse({ status: 404, description: 'Clientes no encontrados' }),
     );
 }

@@ -17,7 +17,7 @@ export function DocLogin() {
 export function DocGetProfile() {
     return applyDecorators(
         ApiOperation({ summary: 'Obtener perfil de usuario autenticado 👀' }),
-        ApiResponse({ status: 200, description: 'Perfil de usuario', type: LoginDto }),
+        ApiResponse({ status: 200, description: 'Perfil de usuario', }),
         ApiResponse({ status: 401, description: 'No autorizado' }),
     );
 }

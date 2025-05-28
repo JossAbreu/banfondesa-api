@@ -3,7 +3,7 @@ import { Controller, Post, Request, UseGuards, Get, Body } from '@nestjs/common'
 import { AuthService } from '@auth/auth.service';
 import { JwtAuthGuard } from '@auth/guards/jwt.guard';
 import { LoginDto } from '@auth/dto/login.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { DocLogin, DocGetProfile } from '@auth/docs/auth.docs';
 
 @ApiTags('Autenticación 🔐')
@@ -20,6 +20,7 @@ export class AuthController {
 
   @DocGetProfile()
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @Get()
   getProfile(@Request() req) {
     return req.user;

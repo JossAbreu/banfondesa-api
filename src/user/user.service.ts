@@ -30,7 +30,16 @@ export class UserService {
         return this.userRepo.findOne({ where: { username } });
     }
 
-    async findAll(): Promise<{ message: string; users: User[] }> {
-        return { message: 'Lista de usuarios', users: await this.userRepo.find() };
+    async findAll(): Promise<{ message: string; users: { username: string; status: boolean }[] }> {
+
+        const users = await this.userRepo.find();
+
+        // Transformamos los usuarios para excluir el password
+        const usersTransformed = users.map(user => ({
+            username: user.username,
+            status: user.status,
+        }));
+
+        return { message: 'Lista de usuarios registrados', users: usersTransformed };
     }
 }
