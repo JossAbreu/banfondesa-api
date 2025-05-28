@@ -12,7 +12,7 @@ Esta API gestiona el ciclo de vida de préstamos (loans), incluyendo clientes, p
 ## Hosting API 🔗 
 
 
- <a href='https://banfondesa-api-production.up.railway.app/api/v1.0/user' target='_blank' >Enlace </a>
+ <a href='https://banfondesa-api-production.up.railway.app/api-docs' target='_blank' >Enlace </a>
 
 
 ## DOCUMENTACION  API 📓
