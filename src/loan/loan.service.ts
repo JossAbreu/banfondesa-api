@@ -10,7 +10,7 @@ import { CreateLoanDto } from './dto/create-loan.dto';
 import { ApproveOrRejectLoanDto } from './dto/approve-or-reject-loan.dto';
 import { AmortizationDto } from './dto/amortization.dto';
 import { PaymentDto } from './dto/payment.dto';
-import { AbonoDto } from './dto/abono.dto';
+import { RepaymentDto } from './dto/repayment.dto';
 import { LoanAmortization } from './entities/loan-amortization.entity'; // 
 import { CapitalPayment } from './entities/capital-payment.entity';
 import { LoanDecisions } from './entities/loan-decisions.entity';
@@ -19,7 +19,7 @@ import { LoanCreationService } from '@loan/services/loan-creation.service';
 import { LoanAprovalOrRejectService } from '@/loan/services/loan-aproval-or-reject.service';
 import { generateAmortization } from "@/loan/utils/generateAmortization.util"
 import { LoanPaymentService } from '@loan/services/loan-payment.service';
-import { LoanAbonoService } from '@loan/services/loan-abono.service';
+import { LoanRepaymentService } from '@/loan/services/loan-repayment.service';
 
 @Injectable()
 export class LoanService {
@@ -29,7 +29,7 @@ export class LoanService {
         private readonly loanCreation: LoanCreationService,
         private readonly loanApprovalOrRejectRepo: LoanAprovalOrRejectService,
         private readonly loanPaymentRepo: LoanPaymentService,
-        private readonly loanAbonoRepo: LoanAbonoService,
+        private readonly loanRepaymentRepo: LoanRepaymentService,
     ) { }
     //metodo para crear un préstamo
     async create(dto: CreateLoanDto) {
@@ -119,7 +119,7 @@ export class LoanService {
 
 
     //funcion para registrar un abono al capital
-    async applyRepaymentToLoan(dto: AbonoDto) {
-        return this.loanAbonoRepo.applyRepaymentToLoan(dto);
+    async applyRepaymentToLoan(dto: RepaymentDto) {
+        return this.loanRepaymentRepo.applyRepaymentToLoan(dto);
     }
 }

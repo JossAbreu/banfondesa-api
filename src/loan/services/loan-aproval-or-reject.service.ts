@@ -11,7 +11,7 @@ import { LoanAmortization } from '@loan/entities/loan-amortization.entity';
 import { ApproveOrRejectLoanDto } from '@loan/dto/approve-or-reject-loan.dto';
 import { generateAmortization } from '@loan/utils/generateAmortization.util';
 import { calculateDueDate } from '@loan/utils/calculateDueDate.util';
-import { updateStatusLoan } from '@loan/utils/update.status.loan';
+
 
 
 @Injectable()
@@ -85,7 +85,6 @@ export class LoanAprovalOrRejectService {
         } else {
             loan.status = 'rechazado';
             await this.loanRepo.save(loan);
-
             const decision = this.loanDecisionsRepo.create({
                 loan,
                 approved: false,
@@ -97,9 +96,14 @@ export class LoanAprovalOrRejectService {
             await this.loanDecisionsRepo.save(decision);
         }
 
+
+
         return {
             message: `Préstamo ${dto.approve ? 'aprobado' : 'rechazado'} correctamente`,
-            loan
+            loan,
+            decision: await this.loanDecisionsRepo.findOne({
+                where: { loan: { id: dto.loanId } },
+            }) || null,
         };
     }
 

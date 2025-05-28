@@ -10,7 +10,7 @@ import { LoanService } from '@loan/loan.service';
 import { LoanAprovalOrRejectService } from '@/loan/services/loan-aproval-or-reject.service'
 import { LoanCreationService } from '@loan/services/loan-creation.service';
 import { LoanPaymentService } from '@loan/services/loan-payment.service';
-import { LoanAbonoService } from '@loan/services/loan-abono.service';
+import { LoanRepaymentService } from '@/loan/services/loan-repayment.service';
 import { LoanController } from '@loan/loan.controller';
 import { Client } from '@client/entities/clients.entity';
 
@@ -19,7 +19,7 @@ import { Client } from '@client/entities/clients.entity';
 @Module({
     imports: [TypeOrmModule.forFeature([Loan, Client, CapitalPayment, LoanAmortization, LoanPayment, LoanDecisions])],
     controllers: [LoanController],
-    providers: [LoanService, LoanAprovalOrRejectService, LoanCreationService, LoanPaymentService, LoanAbonoService],
+    providers: [LoanService, LoanAprovalOrRejectService, LoanCreationService, LoanPaymentService, LoanRepaymentService],
     exports: [LoanService, TypeOrmModule],
 })
 export class LoanModule { }

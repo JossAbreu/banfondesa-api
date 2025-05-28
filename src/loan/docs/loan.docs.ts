@@ -4,7 +4,7 @@ import { ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 export function DocCreateLoan() {
     return applyDecorators(
         ApiOperation({ summary: 'Crear un nuevo préstamo 💳' }),
-        ApiResponse({ status: 200, description: 'Préstamo creado exitosamente' }),
+        ApiResponse({ status: 201, description: 'Préstamo creado exitosamente' }),
         ApiResponse({ status: 404, description: 'Cliente no encontrado' }),
         ApiResponse({ status: 400, description: 'Cliente ya tiene un préstamo pendiente' })
     );

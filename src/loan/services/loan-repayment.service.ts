@@ -7,12 +7,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoanAmortization } from '@loan/entities/loan-amortization.entity';
 import { recalculateAmortization, calculateRemainingBalance } from '@loan/utils/recalculateAmortization.util';
-import { AbonoDto } from '@loan/dto/abono.dto';
+import { RepaymentDto } from '@/loan/dto/repayment.dto';
 import { CapitalPayment } from '@loan/entities/capital-payment.entity';
 import { Loan } from '@loan/entities/loan.entity';
 
 @Injectable()
-export class LoanAbonoService {
+export class LoanRepaymentService {
     constructor(
         @InjectRepository(Loan)
         private readonly loanRepo: Repository<Loan>,
@@ -23,7 +23,7 @@ export class LoanAbonoService {
 
     ) { }
 
-    async applyRepaymentToLoan(dto: AbonoDto) {
+    async applyRepaymentToLoan(dto: RepaymentDto) {
         //verifico si el monto es mayor a 0
         if (dto.amount <= 0) {
             throw new BadRequestException('El monto debe ser mayor a 0');
@@ -46,7 +46,6 @@ export class LoanAbonoService {
             message: dto.description || 'Abono registrado exitosamente',
             remaining: await calculateRemainingBalance(loan.id, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo),
             capitalPayment: capitalPayment.amount,
-
         };
     }
 

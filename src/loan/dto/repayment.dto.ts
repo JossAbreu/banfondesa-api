@@ -1,7 +1,7 @@
 import { IsInt, IsPositive, IsNumber, IsEmpty, Min } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
-export class AbonoDto {
+export class RepaymentDto {
     @IsInt()
     @ApiProperty({ description: 'ID del préstamo', example: 1 })
     loanId: number;

@@ -27,12 +27,6 @@
       "@client/*": [
         "src/clients/*"
       ],
-      "@payments/*": [
-        "src/payments/*"
-      ],
-      "@common/*": [
-        "src/common/*"
-      ],
     },
     "types": [
       "node"

@@ -2,6 +2,7 @@
 
 import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+
 export class ApproveOrRejectLoanDto {
     @IsNumber()
     @IsNotEmpty({ message: 'El ID del préstamo no puede estar vacío por favor envie el campo "loanId"' })

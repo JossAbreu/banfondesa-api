@@ -12,7 +12,7 @@ import { UpdateClientDto } from '@client/dto/update-client.dto';
 export function DocCreateClient() {
     return applyDecorators(
         ApiOperation({ summary: 'Crear un nuevo cliente 👤' }),
-        ApiResponse({ status: 200, description: 'Cliente creado exitosamente', type: CreateClientDto }),
+        ApiResponse({ status: 201, description: 'Cliente creado exitosamente', type: CreateClientDto }),
         ApiResponse({ status: 404, description: 'Cliente no encontrado' }),
         ApiBadRequestResponse({ description: 'El cliente ya existe' }),
     );

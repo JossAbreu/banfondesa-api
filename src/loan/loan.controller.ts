@@ -12,12 +12,12 @@ import { CreateLoanDto } from './dto/create-loan.dto';
 import { ApproveOrRejectLoanDto } from './dto/approve-or-reject-loan.dto';
 import { AmortizationDto } from './dto/amortization.dto';
 import { PaymentDto } from './dto/payment.dto';
-import { AbonoDto } from '@loan/dto/abono.dto';
+import { RepaymentDto } from '@/loan/dto/repayment.dto';
 
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { DocCreateLoan, DocGetAllLoans, DocGetLoanById, DocGetLoanWithAmortization, DocApproveOrRejectLoan, DocCalculateAmortization, DocRegisterPayment, DocRegisterAbono } from '@loan/docs/loan.docs';
 
-@ApiTags('Prestamos')
+@ApiTags('Prestamos 📑')
 @ApiBearerAuth('access-token')
 @Controller()
 @UseGuards(JwtAuthGuard)
@@ -38,14 +38,14 @@ export class LoanController {
         return this.loanService.findAll();
     }
 
-    // // 3. Obtener préstamo por ID (sin amortización)
+    // 3. Obtener préstamo por ID (sin amortización)
     @Get('v1.0/loan/:id')
     @DocGetLoanById()
     getLoanById(@Param('id') id: string) {
         return this.loanService.findOneWithoutAmortization(+id);
     }
 
-    // // 4. Obtener préstamo con amortización
+    //  4. Obtener préstamo con amortización
     @Get('v2.0/loan/:id')
     @DocGetLoanWithAmortization()
     getLoanWithAmortization(@Param('id') id: string) {
@@ -76,7 +76,7 @@ export class LoanController {
     // 8. Realizar abono a capital
     @Post('v1.0/loan/abono')
     @DocRegisterAbono()
-    registerAbono(@Body() dto: AbonoDto) {
+    registerAbono(@Body() dto: RepaymentDto) {
         return this.loanService.applyRepaymentToLoan(dto);
     }
 }

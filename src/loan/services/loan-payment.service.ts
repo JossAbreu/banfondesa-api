@@ -11,7 +11,9 @@ import { calculateRemainingBalance } from '@loan/utils/recalculateAmortization.u
 import { PaymentDto } from '@loan/dto/payment.dto';
 import { CapitalPayment } from '@loan/entities/capital-payment.entity';
 import { Loan } from '@loan/entities/loan.entity';
-import { LoanAbonoService } from '@loan/services/loan-abono.service';
+import { LoanRepaymentService } from '@/loan/services/loan-repayment.service';
+import { RepaymentResponse } from '@loan/types/repayment.interface';
+
 
 @Injectable()
 export class LoanPaymentService {
@@ -24,7 +26,7 @@ export class LoanPaymentService {
         private readonly capitalPaymentRepo: Repository<CapitalPayment>,
         @InjectRepository(LoanPayment)
         private readonly loanPaymentRepo: Repository<LoanPayment>,
-        private readonly loanAbonoService: LoanAbonoService,
+        private readonly loanRepaymentRepo: LoanRepaymentService,
     ) { }
 
     async registerPayment(dto: PaymentDto) {
@@ -92,23 +94,17 @@ export class LoanPaymentService {
         amortization.paymentDate = new Date();
         await this.loanAmortizationRepo.save(amortization);
 
-        interface abonoResponse {
-            amount?: number;
-            message: string;
-            remaining: number;
-            capitalPayment: number;
-        }
 
         //TODO: Tipar el abono extra correctamente
-        let abono: abonoResponse = {
+        let repaymentResponse: RepaymentResponse = {
             amount: 0,
             message: '',
             remaining: 0,
             capitalPayment: 0,
         };
         if (extra > 0) {
-            console.log('Registrando abono extra:', extra); //FIXME remove this line in production
-            abono = await this.loanAbonoService.applyRepaymentToLoan({
+            // console.log('Registrando abono extra:', extra); //FIXME remove this line in production
+            repaymentResponse = await this.loanRepaymentRepo.applyRepaymentToLoan({
 
                 loanId,
                 amount: extra,
@@ -117,7 +113,7 @@ export class LoanPaymentService {
         }
 
 
-        const payment = await this.loanPaymentRepo.create({
+        const payment = this.loanPaymentRepo.create({
             loan: { id: loanId },
             isExtraPayment: extra > 0,
             amortization: { id: amortization.id },
@@ -147,7 +143,7 @@ export class LoanPaymentService {
             loanStatus: updatedLoan?.status || loan?.status,
             extraPayment: extra > 0 ? {
                 amount: extra.toFixed(2),
-                ...abono,
+                ...repaymentResponse,
             } : null,
         };
 
