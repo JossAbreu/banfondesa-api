@@ -39,4 +39,20 @@ import { env } from 'process';
   ],
 
 })
-export class AppModule { }
+export class AppModule {
+
+  //lanzar console.log con la configuración de la base de datos
+  constructor() {
+    this.logDatabaseConfig();
+  }
+
+  private logDatabaseConfig() {
+    console.log({
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD,
+      name: process.env.DB_NAME,
+    });
+  }
+}
