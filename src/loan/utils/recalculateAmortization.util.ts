@@ -71,7 +71,7 @@ export async function recalculateAmortization(
             const dueDate = calculateDueDate(startDate, installmentNumber);
 
             if (i < unpaidInstallments.length) {
-                // Actualizar cuota existente
+
                 const installment = unpaidInstallments[i];
                 installment.installmentNumber = installmentNumber;
                 installment.dueDate = dueDate;
@@ -82,7 +82,7 @@ export async function recalculateAmortization(
                 installment.paymentDate = null;
                 await loanAmortizationRepo.save(installment);
             } else {
-                // Crear nueva cuota si no hay suficiente
+
                 await loanAmortizationRepo.save(
                     loanAmortizationRepo.create({
                         loan,
@@ -99,7 +99,7 @@ export async function recalculateAmortization(
             }
         }
 
-        // Eliminar cuotas sobrantes si las hay
+
         if (unpaidInstallments.length > newAmortization.length) {
             const extraInstallments = unpaidInstallments.slice(newAmortization.length);
             await loanAmortizationRepo.remove(extraInstallments);
@@ -153,12 +153,12 @@ export async function calculateRemainingBalance(loanId: number, loanRepo: Reposi
         where: { loanId, paid: false },
     });
 
-    // Si no hay amortizaciones pendientes, significa que el préstamo ya ha sido pagado
+
     if (!amortizations || amortizations.length === 0) {
         return 0;
     }
 
-    // También considera los abonos extras al capital
+
     const capitalPayments = await capitalPaymentRepo.find({
         where: { loanId },
         relations: ['loan'],
