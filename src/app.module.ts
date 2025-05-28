@@ -6,6 +6,7 @@ import { UserModule } from './user/user.module';
 import { LoanModule } from '@loan/loan.module';
 import { ClientsModule } from '@client/clients.module';
 import { ConfigModule } from '@nestjs/config';
+import { env } from 'process';
 
 
 
@@ -22,7 +23,13 @@ import { ConfigModule } from '@nestjs/config';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: env.NODE_ENV !== 'production', // No usar synchronize en producción
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      },
     }),
     AuthModule,
     UserModule,
