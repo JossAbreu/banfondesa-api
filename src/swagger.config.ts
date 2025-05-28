@@ -13,6 +13,8 @@ export const config = new DocumentBuilder()
   .setContact('Banfondesa', 'https://banfondesa.com.do', 'info@banfondesa.com.do')
   .setLicense('MIT', 'https://opensource.org/licenses/MIT')
   .setVersion('1.0')
+  .addServer('http://localhost:3000', 'Development Server')
+  .addServer('https://banfondesa-api-production.up.railway.app', 'Production Server')
   .addBearerAuth(
     {
       type: 'http',
@@ -22,6 +24,7 @@ export const config = new DocumentBuilder()
       in: 'header',
     },
     'access-token',
+
 
   )
   .build();
