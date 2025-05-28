@@ -77,6 +77,6 @@ export class LoanController {
     @Post('v1.0/loan/abono')
     @DocRegisterAbono()
     registerAbono(@Body() dto: AbonoDto) {
-        return this.loanService.registerAbono(dto);
+        return this.loanService.applyRepaymentToLoan(dto);
     }
 }

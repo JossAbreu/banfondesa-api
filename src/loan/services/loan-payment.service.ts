@@ -32,6 +32,8 @@ export class LoanPaymentService {
         const { loanId, amountPaid } = dto;
 
         const loan = await this.loanRepo.findOne({ where: { id: loanId } });
+
+
         if (!loan) throw new NotFoundException('Préstamo no encontrado');
 
         if (['pagado'].includes(loan.status)) {
@@ -51,7 +53,7 @@ export class LoanPaymentService {
 
 
         const nextInstallment = lastPaid ? (lastPaid.installmentNumber || 0) + 1 : 1;
-        console.log('Siguiente cuota:', nextInstallment); //FIXME remove this line in production
+        //console.log('Siguiente cuota:', nextInstallment); //FIXME remove this line in production
         const amortization = await this.loanAmortizationRepo.findOne({
             where: { loanId, installmentNumber: nextInstallment },
         });
@@ -90,13 +92,24 @@ export class LoanPaymentService {
         amortization.paymentDate = new Date();
         await this.loanAmortizationRepo.save(amortization);
 
-
+        interface abonoResponse {
+            amount?: number;
+            message: string;
+            remaining: number;
+            capitalPayment: number;
+        }
 
         //TODO: Tipar el abono extra correctamente
-        let abono;
+        let abono: abonoResponse = {
+            amount: 0,
+            message: '',
+            remaining: 0,
+            capitalPayment: 0,
+        };
         if (extra > 0) {
             console.log('Registrando abono extra:', extra); //FIXME remove this line in production
-            abono = await this.loanAbonoService.registerAbono({
+            abono = await this.loanAbonoService.applyRepaymentToLoan({
+
                 loanId,
                 amount: extra,
                 description: nextInstallment ? 'Abono registrado de la cuota numero ' + nextInstallment : 'Abono registrado',
@@ -104,7 +117,7 @@ export class LoanPaymentService {
         }
 
 
-        const payment = this.loanPaymentRepo.create({
+        const payment = await this.loanPaymentRepo.create({
             loan: { id: loanId },
             isExtraPayment: extra > 0,
             amortization: { id: amortization.id },
@@ -114,16 +127,30 @@ export class LoanPaymentService {
 
         await this.loanPaymentRepo.save(payment);
 
+        const remainingBalance = await calculateRemainingBalance(
+            loanId, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo
+        );
+        // console.log('Saldo restante después del pago:', remainingBalance); //FIXME remove this line in production
+        if (remainingBalance <= 0) {
+            console.log('Préstamo pagado completamente'); //FIXME remove this line in production
+            await this.loanRepo.update(loanId, { status: 'pagado' });
+
+        }
+
+
+
+        const updatedLoan = await this.loanRepo.findOne({ where: { id: loanId } });
 
         return {
             message: 'Pago registrado correctamente',
-            remainingBalance: await calculateRemainingBalance(loanId, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo),
-            loanStatus: loan.status,
+            remainingBalance,
+            loanStatus: updatedLoan?.status || loan?.status,
             extraPayment: extra > 0 ? {
                 amount: extra.toFixed(2),
                 ...abono,
             } : null,
         };
+
     }
 
 

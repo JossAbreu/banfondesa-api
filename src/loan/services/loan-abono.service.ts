@@ -23,7 +23,7 @@ export class LoanAbonoService {
 
     ) { }
 
-    async registerAbono(dto: AbonoDto) {
+    async applyRepaymentToLoan(dto: AbonoDto) {
         //verifico si el monto es mayor a 0
         if (dto.amount <= 0) {
             throw new BadRequestException('El monto debe ser mayor a 0');
@@ -46,6 +46,7 @@ export class LoanAbonoService {
             message: dto.description || 'Abono registrado exitosamente',
             remaining: await calculateRemainingBalance(loan.id, this.loanRepo, this.loanAmortizationRepo, this.capitalPaymentRepo),
             capitalPayment: capitalPayment.amount,
+
         };
     }
 

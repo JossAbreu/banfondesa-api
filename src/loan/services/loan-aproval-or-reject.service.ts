@@ -99,6 +99,7 @@ export class LoanAprovalOrRejectService {
 
         return {
             message: `Préstamo ${dto.approve ? 'aprobado' : 'rechazado'} correctamente`,
+            loan
         };
     }
 

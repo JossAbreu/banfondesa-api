@@ -119,7 +119,7 @@ export class LoanService {
 
 
     //funcion para registrar un abono al capital
-    async registerAbono(dto: AbonoDto) {
-        return this.loanAbonoRepo.registerAbono(dto);
+    async applyRepaymentToLoan(dto: AbonoDto) {
+        return this.loanAbonoRepo.applyRepaymentToLoan(dto);
     }
 }
