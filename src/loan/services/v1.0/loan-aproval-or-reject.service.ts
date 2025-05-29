@@ -13,7 +13,6 @@ import { generateAmortization } from '@loan/utils/generateAmortization.util';
 import { calculateDueDate } from '@loan/utils/calculateDueDate.util';
 
 
-
 @Injectable()
 export class LoanAprovalOrRejectService {
     constructor(
