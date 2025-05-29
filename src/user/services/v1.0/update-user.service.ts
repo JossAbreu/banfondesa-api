@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from '@user/entities/user.entity';
 import { UpdateUserDto } from '@/user/dto/v1.0/update-user.dto';
 import * as bcrypt from 'bcrypt';
-
+import { UserResponseDto } from '@/user/dto/v1.0/user-response.dto';
 
 
 @Injectable()
@@ -16,7 +16,7 @@ export class UpdateUserService {
         private userRepo: Repository<User>,
     ) { }
 
-    async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    async updateUser(id: number, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
         const user = await this.userRepo.findOne({ where: { id } });
 
         if (!user) {
@@ -44,7 +44,14 @@ export class UpdateUserService {
         if (typeof updateUserDto.status === 'boolean') {
             user.status = updateUserDto.status;
         }
-
-        return this.userRepo.save(user);
+        const updatedUser = await this.userRepo.save(user);
+        return {
+            message: 'Usuario actualizado exitosamente',
+            user: {
+                id: updatedUser.id,
+                username: updatedUser.username,
+                status: updatedUser.status,
+            }
+        };
     }
 }

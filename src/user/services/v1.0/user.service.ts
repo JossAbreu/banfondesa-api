@@ -7,7 +7,7 @@ import { UpdateUserDto } from '@/user/dto/v1.0/update-user.dto';
 import { User } from '@user/entities/user.entity';
 import { CrearUserService } from '@/user/services/v1.0/crear-user.service';
 import { UpdateUserService } from '@/user/services/v1.0/update-user.service';
-import { CreateUserResponseDto } from '@/user/dto/v1.0/create-user-response.dto';
+import { UserResponseDto } from '@/user/dto/v1.0/user-response.dto';
 import { UserBaseService } from '@/user/services/user.base.service';
 
 
@@ -23,11 +23,11 @@ export class UserServiceV1 extends UserBaseService {
         super(userRepo);
     }
 
-    async create(createUserDto: CreateUserDto): Promise<CreateUserResponseDto> {
+    async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
         return this.crearUserRepo.create(createUserDto);
     }
 
-    async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+    async update(id: number, updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
         return this.updateUserRepo.updateUser(id, updateUserDto);
 
     }

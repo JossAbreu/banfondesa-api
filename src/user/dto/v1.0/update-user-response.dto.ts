@@ -2,7 +2,7 @@
 import { IsBoolean, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
-export class UpdateUserDto {
+export class UpdateUserResponseDto {
     @IsOptional()
     @IsString({ message: 'El nombre de usuario debe ser una cadena de texto' })
     @IsNotEmpty({ message: 'El campo nombre de usuario no debe estar vacío' })

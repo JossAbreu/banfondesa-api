@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '@user/entities/user.entity';
 import { CreateUserDto } from '@/user/dto/v1.0/create-user.dto'
-import { CreateUserResponseDto } from '@/user/dto/v1.0/create-user-response.dto';
+import { UserResponseDto } from '@/user/dto/v1.0/user-response.dto';
 import * as bcrypt from 'bcrypt';
 import { plainToInstance } from 'class-transformer';
 
@@ -17,7 +17,7 @@ export class CrearUserService {
         private userRepo: Repository<User>,
     ) { }
 
-    async create(createUserDto: CreateUserDto): Promise<CreateUserResponseDto> {
+    async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
         const existingUser = await this.userRepo.findOne({
             where: { username: createUserDto.username },
         });
@@ -30,8 +30,12 @@ export class CrearUserService {
             password: hashedPassword,
         });
         const savedUser = await this.userRepo.save(user);
-        return plainToInstance(CreateUserResponseDto, savedUser, {
-            excludeExtraneousValues: true
-        });
+
+        const response = new UserResponseDto();
+        response.user.id = savedUser.id;
+        response.user.username = savedUser.username;
+        response.user.status = savedUser.status;
+        response.message = 'Usuario creado exitosamente';
+        return response;
     }
 }

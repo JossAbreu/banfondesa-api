@@ -24,6 +24,7 @@ export class UserBaseService {
 
         // Transformamos los usuarios para excluir el password
         const usersTransformed = users.map(user => ({
+            id: user.id,
             username: user.username,
             status: user.status,
         }));

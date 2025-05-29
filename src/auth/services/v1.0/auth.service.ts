@@ -45,10 +45,7 @@ export class AuthServiceV1 {
     return {
       message: 'Login exitoso',
       access_token: token,
-      user: {
-        id: user.id,
-        username: user.username,
-      },
+
     };
   }
 }
