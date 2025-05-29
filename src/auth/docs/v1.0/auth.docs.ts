@@ -4,7 +4,7 @@ import {
     ApiOperation,
     ApiResponse,
 } from '@nestjs/swagger';
-import { LoginResponseDto } from '@auth/dto/login.response.dto';
+import { LoginResponseDto } from '@/auth/dto/v1.0/login.response.dto';
 
 
 export function DocLogin() {

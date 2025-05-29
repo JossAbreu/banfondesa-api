@@ -1,21 +1,22 @@
 
 import { Controller, Post, Request, UseGuards, Get, Body } from '@nestjs/common';
-import { AuthService } from '@auth/auth.service';
+import { AuthServiceV1 } from '@auth/services/v1.0/auth.service';
 import { JwtAuthGuard } from '@auth/guards/jwt.guard';
-import { LoginDto } from '@auth/dto/login.dto';
+import { LoginDto } from '@/auth/dto/v1.0/login.dto';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
-import { DocLogin, DocGetProfile } from '@auth/docs/auth.docs';
+import { DocLogin, DocGetProfile } from '@/auth/docs/v1.0/auth.docs';
+
 
 @ApiTags('Autenticación 🔐')
-@Controller('v1.0/auth')
-export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+@Controller({ path: 'auth', version: '1.0' })
+export class AuthControllerV1 {
+  constructor(private readonly AuthServiceV1: AuthServiceV1) { }
 
 
   @DocLogin()
   @Post()
   async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+    return this.AuthServiceV1.login(loginDto);
   }
 
   @DocGetProfile()

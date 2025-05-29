@@ -3,8 +3,8 @@ import {
     ApiOperation,
     ApiResponse,
 } from '@nestjs/swagger';
-import { CreateUserDto } from '@user/dto/create-user.dto';
-import { UpdateUserDto } from '@user/dto/update-user.dto';
+import { CreateUserDto } from '@/user/dto/v1.0/create-user.dto';
+import { UpdateUserDto } from '@/user/dto/v1.0/update-user.dto';
 
 export function DocFindAllUsers() {
     return applyDecorators(

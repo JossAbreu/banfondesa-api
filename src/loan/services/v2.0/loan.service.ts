@@ -7,6 +7,9 @@ import { Repository } from 'typeorm';
 import { Loan } from '@loan/entities/loan.entity';
 import { generateAmortization } from "@/loan/utils/generateAmortization.util"
 import { LoanBaseService } from '@/loan/services/loan.base.service';
+
+
+
 @Injectable()
 export class LoanServiceV2 extends LoanBaseService {
     constructor(

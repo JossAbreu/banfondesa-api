@@ -4,7 +4,7 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Client } from "@client/entities/clients.entity";
-import { UpdateClientDto } from '@client/dto/update-client.dto';
+import { UpdateClientDto } from '@/clients/dto/v1.0/update-client.dto';
 
 
 @Injectable()

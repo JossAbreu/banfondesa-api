@@ -6,8 +6,8 @@ import {
     ApiBadRequestResponse,
     ApiParam,
 } from '@nestjs/swagger';
-import { CreateClientDto } from '@client/dto/create-client.dto';
-import { UpdateClientDto } from '@client/dto/update-client.dto';
+import { CreateClientDto } from '@/clients/dto/v1.0/create-client.dto';
+import { UpdateClientDto } from '@/clients/dto/v1.0/update-client.dto';
 
 export function DocCreateClient() {
     return applyDecorators(

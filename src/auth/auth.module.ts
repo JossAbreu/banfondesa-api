@@ -1,11 +1,12 @@
 //src/auth/auth.module.ts
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UserModule } from '../user/user.module'; // Asegúrate de importar esto
+import { AuthServiceV1 } from '@auth/services/v1.0/auth.service';
+import { UserModule } from '@user/user.module';
+import { UserBaseService } from '@user/services/user.base.service';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { AuthController } from './auth.controller';
+import { AuthControllerV1 } from '@auth/controllers/v1.0/auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 
@@ -25,8 +26,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
   ],
-  providers: [AuthService, JwtStrategy],
-  controllers: [AuthController],
+  providers: [AuthServiceV1, UserBaseService, JwtStrategy],
+  controllers: [AuthControllerV1],
 })
 export class AuthModule {
 
