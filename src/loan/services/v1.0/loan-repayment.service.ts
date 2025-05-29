@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { LoanAmortization } from '@loan/entities/loan-amortization.entity';
 import { recalculateAmortization, calculateRemainingBalance } from '@loan/utils/recalculateAmortization.util';
-import { RepaymentDto } from '@/loan/dto/repayment.dto';
+import { RepaymentDto } from '@/loan/dto/v1.0/repayment.dto';
 import { CapitalPayment } from '@loan/entities/capital-payment.entity';
 import { Loan } from '@loan/entities/loan.entity';
 

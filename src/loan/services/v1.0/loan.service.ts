@@ -5,32 +5,33 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Loan } from './entities/loan.entity';
-import { CreateLoanDto } from './dto/create-loan.dto';
-import { ApproveOrRejectLoanDto } from './dto/approve-or-reject-loan.dto';
-import { AmortizationDto } from './dto/amortization.dto';
-import { PaymentDto } from './dto/payment.dto';
-import { RepaymentDto } from './dto/repayment.dto';
-import { LoanAmortization } from './entities/loan-amortization.entity'; // 
-import { CapitalPayment } from './entities/capital-payment.entity';
-import { LoanDecisions } from './entities/loan-decisions.entity';
-import { Client } from '@/clients/entities/clients.entity';
-import { LoanCreationService } from '@loan/services/loan-creation.service';
-import { LoanAprovalOrRejectService } from '@/loan/services/loan-aproval-or-reject.service';
+import { Loan } from '@loan/entities/loan.entity';
+import { CreateLoanDto } from '@/loan/dto/v1.0/create-loan.dto';
+import { ApproveOrRejectLoanDto } from '@/loan/dto/v1.0/approve-or-reject-loan.dto';
+import { AmortizationDto } from '@/loan/dto/v1.0/amortization.dto';
+import { PaymentDto } from '@/loan/dto/v1.0/payment.dto';
+import { RepaymentDto } from '@/loan/dto/v1.0/repayment.dto';
+
+import { LoanCreationService } from '@/loan/services/v1.0/loan-creation.service';
+import { LoanAprovalOrRejectService } from '@/loan/services/v1.0/loan-aproval-or-reject.service';
 import { generateAmortization } from "@/loan/utils/generateAmortization.util"
-import { LoanPaymentService } from '@loan/services/loan-payment.service';
-import { LoanRepaymentService } from '@/loan/services/loan-repayment.service';
+import { LoanPaymentService } from '@/loan/services/v1.0/loan-payment.service';
+import { LoanRepaymentService } from '@/loan/services/v1.0/loan-repayment.service';
+import { LoanBaseService } from '@/loan/services/loan.base.service';
+
 
 @Injectable()
-export class LoanService {
+export class LoanServiceV1 extends LoanBaseService {
     constructor(
         @InjectRepository(Loan)
-        private readonly loanRepo: Repository<Loan>,
+        loanRepo: Repository<Loan>,
         private readonly loanCreation: LoanCreationService,
         private readonly loanApprovalOrRejectRepo: LoanAprovalOrRejectService,
         private readonly loanPaymentRepo: LoanPaymentService,
         private readonly loanRepaymentRepo: LoanRepaymentService,
-    ) { }
+    ) {
+        super(loanRepo);
+    }
     //metodo para crear un préstamo
     async create(dto: CreateLoanDto) {
         return this.loanCreation.create(dto);
@@ -50,38 +51,7 @@ export class LoanService {
 
         return loan;
     }
-    //metodo para buscar un prestamo con amortizacion
-    async findOneWithAmortization(id: number) {
-        const loan = await this.findOneWithoutAmortization(id);
 
-        const amount = Number(loan.amount);
-        const annualRate = Number(loan.interestRate);
-        const months = loan.termMonths;
-
-        const monthlyRate = annualRate / 12;
-
-        // Cálculo de la cuota mensual fija (sistema francés)
-        const monthlyPayment =
-            (amount * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
-
-        const totalToPay = monthlyPayment * months;
-        const totalInterest = totalToPay - amount;
-
-        const amortization = generateAmortization(
-            amount,
-            months,
-            annualRate,
-            loan.amortizationType as 'fija' | 'variable',
-        );
-
-        return {
-            ...loan,
-            amortization,
-            interestAmount: totalInterest,
-            monthlyPayment,
-            totalAmount: totalToPay,
-        };
-    }
 
     //metodo para aprobar o rechazar un préstamo
     async approveOrReject(dto: ApproveOrRejectLoanDto) {

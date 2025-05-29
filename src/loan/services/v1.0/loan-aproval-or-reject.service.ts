@@ -8,7 +8,7 @@ import { Repository } from 'typeorm';
 import { Loan } from '@loan/entities/loan.entity';
 import { LoanDecisions } from '@loan/entities/loan-decisions.entity';
 import { LoanAmortization } from '@loan/entities/loan-amortization.entity';
-import { ApproveOrRejectLoanDto } from '@loan/dto/approve-or-reject-loan.dto';
+import { ApproveOrRejectLoanDto } from '@/loan/dto/v1.0/approve-or-reject-loan.dto';
 import { generateAmortization } from '@loan/utils/generateAmortization.util';
 import { calculateDueDate } from '@loan/utils/calculateDueDate.util';
 

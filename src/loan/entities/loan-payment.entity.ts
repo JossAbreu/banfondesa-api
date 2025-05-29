@@ -6,8 +6,8 @@ import {
     Column,
     ManyToOne,
 } from 'typeorm';
-import { Loan } from './loan.entity';
-import { LoanAmortization } from './loan-amortization.entity';
+import { Loan } from '@loan/entities/loan.entity';
+import { LoanAmortization } from '@loan/entities/loan-amortization.entity';
 
 @Entity('loan_payments')
 export class LoanPayment {

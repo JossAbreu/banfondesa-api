@@ -8,10 +8,10 @@ import { Repository } from 'typeorm';
 import { LoanAmortization } from '@loan/entities/loan-amortization.entity';
 import { LoanPayment } from '@loan/entities/loan-payment.entity';
 import { calculateRemainingBalance } from '@loan/utils/recalculateAmortization.util';
-import { PaymentDto } from '@loan/dto/payment.dto';
+import { PaymentDto } from '@/loan/dto/v1.0/payment.dto';
 import { CapitalPayment } from '@loan/entities/capital-payment.entity';
 import { Loan } from '@loan/entities/loan.entity';
-import { LoanRepaymentService } from '@/loan/services/loan-repayment.service';
+import { LoanRepaymentService } from '@/loan/services/v1.0/loan-repayment.service';
 import { RepaymentResponse } from '@loan/types/repayment.interface';
 
 

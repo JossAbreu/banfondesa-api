@@ -30,8 +30,8 @@ async function bootstrap() {
   );
 
   app.enableVersioning({
-    type: VersioningType.HEADER,
-    header: 'X-API-Version',
+    type: VersioningType.URI,
+    defaultVersion: '1.0',
   });
 
   await app.listen(process.env.PORT || 3000);
