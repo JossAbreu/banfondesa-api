@@ -24,10 +24,7 @@ export class LoanRepaymentService {
     ) { }
 
     async applyRepaymentToLoan(dto: RepaymentDto) {
-        //verifico si el monto es mayor a 0
-        if (dto.amount <= 0) {
-            throw new BadRequestException('El monto debe ser mayor a 0');
-        }
+
         //verifico si el préstamo existe y no hay cuotas pendientes
         const loan = await this.loanRepo.findOne({ where: { id: dto.loanId } });
         if (!loan) throw new NotFoundException('Préstamo no encontrado');

@@ -27,11 +27,6 @@ export class LoanCreationService {
             throw new NotFoundException('Cliente no encontrado');
         }
 
-        if (dto.amount <= 0) {
-            throw new BadRequestException('El monto del préstamo debe ser mayor a cero');
-        }
-
-
         const loan = this.loanRepo.create({
             amount: dto.amount,
             termMonths: dto.termMonths,

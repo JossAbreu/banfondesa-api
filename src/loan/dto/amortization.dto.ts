@@ -4,12 +4,13 @@ import { IsNumber, IsPositive, Max, IsInt, Min, IsIn } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 export class AmortizationDto {
     @IsNumber()
-    @IsPositive()
+    @IsPositive({ message: 'El monto del préstamo debe ser un número positivo' })
+    @Min(1, { message: 'El monto del préstamo debe ser mayor a 0' })
     @ApiProperty({ description: 'Monto del préstamo', example: 1000 })
     amount: number;
 
     @IsInt()
-    @Min(1)
+    @Min(1, { message: 'El plazo en meses debe ser un número entero positivo' })
     @ApiProperty({ description: 'Plazo en meses', example: 12 })
     termMonths: number;
 

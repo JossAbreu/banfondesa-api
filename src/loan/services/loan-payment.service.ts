@@ -50,7 +50,7 @@ export class LoanPaymentService {
             order: { installmentNumber: 'DESC' },
         });
 
-        console.log('Última cuota pagada:', lastPaid); //FIXME remove this line in production
+        // console.log('Última cuota pagada:', lastPaid); //FIXME remove this line in production
 
 
 
