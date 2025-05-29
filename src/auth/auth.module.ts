@@ -1,11 +1,11 @@
-//src/auth/auth.module.ts
+//src/auth/v1.0/auth.module.ts
 import { Module } from '@nestjs/common';
 import { AuthServiceV1 } from '@auth/services/v1.0/auth.service';
 import { UserModule } from '@user/user.module';
 import { UserBaseService } from '@user/services/user.base.service';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtStrategy } from '@auth/strategies/jwt.strategy';
 import { AuthControllerV1 } from '@auth/controllers/v1.0/auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -29,6 +29,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   providers: [AuthServiceV1, UserBaseService, JwtStrategy],
   controllers: [AuthControllerV1],
 })
-export class AuthModule {
+export class AuthModuleV1 {
 
 }

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './auth/auth.module';
+import { AuthModuleV1 } from '@auth/auth.module';
 import { UserModule } from './user/user.module';
-import { LoanModule } from '@loan/loan.module';
+import { LoanModule } from '@/loan/loan.module';
 import { ClientsModule } from '@client/clients.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
@@ -26,15 +26,15 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
       }),
     }),
-    AuthModule,
+    AuthModuleV1,
     UserModule,
     ClientsModule,
-    LoanModule,
+    LoanModule
   ],
 })
 export class AppModule {
   constructor(private config: ConfigService) {
-    this.logDatabaseConfig();
+    //this.logDatabaseConfig();
   }
 
   private logDatabaseConfig() {

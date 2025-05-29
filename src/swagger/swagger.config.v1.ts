@@ -1,8 +1,8 @@
 // Configuración de Swagger
 import { DocumentBuilder } from '@nestjs/swagger';
 
-export const config = new DocumentBuilder()
-  .setTitle('BANFONDESA API 📚',)
+export const configV1 = new DocumentBuilder()
+  .setTitle('BANFONDESA API  📚',)
 
   .setDescription(`Desarrollar e implementar una API REST utilizando NestJS, asegurando autenticación con JWT,
  documentación con Swagger y almacenamiento en una base de datos PostgreSQL. BY: Josue abreu de la rosa 
