@@ -7,6 +7,8 @@ import { UpdateUserDto } from '@user/dto/update-user.dto';
 import { User } from '@user/entities/user.entity';
 import { CrearUserService } from '@user/services/crear-user.service';
 import { UpdateUserService } from '@user/services/update-user.service';
+import { CreateUserResponseDto } from '@user/dto/create-user-response.dto';
+
 
 @Injectable()
 export class UserService {
@@ -17,7 +19,7 @@ export class UserService {
         private updateUserRepo: UpdateUserService,
     ) { }
 
-    async create(createUserDto: CreateUserDto): Promise<User> {
+    async create(createUserDto: CreateUserDto): Promise<CreateUserResponseDto> {
         return this.crearUserRepo.create(createUserDto);
     }
 

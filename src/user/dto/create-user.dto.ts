@@ -12,6 +12,5 @@ export class CreateUserDto {
     @ApiProperty({ description: 'contraseña', example: '********', format: 'password', minLength: 6 })
     @IsString({ message: 'La contraseña debe ser una cadena de texto.' })
     @MinLength(6, { message: 'La contraseña debe tener al menos 6 caracteres.' })
-
     password: string;
 }

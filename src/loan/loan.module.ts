@@ -11,8 +11,8 @@ import { LoanAprovalOrRejectService } from '@/loan/services/loan-aproval-or-reje
 import { LoanCreationService } from '@loan/services/loan-creation.service';
 import { LoanPaymentService } from '@loan/services/loan-payment.service';
 import { LoanRepaymentService } from '@/loan/services/loan-repayment.service';
-import { V1LoanController } from '@/loan/controllers/v1/loan.controller';
-import { V2LoanController } from '@/loan/controllers/v2/loan.controller';
+import { V1LoanController } from '@/loan/controllers/v1.0/loan.controller';
+import { V2LoanController } from '@/loan/controllers/v2.0/loan.controller';
 import { Client } from '@client/entities/clients.entity';
 
 

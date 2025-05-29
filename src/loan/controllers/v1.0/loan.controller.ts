@@ -18,7 +18,7 @@ import { DocCreateLoan, DocGetAllLoans, DocGetLoanById, DocApproveOrRejectLoan, 
 
 @ApiTags('Prestamos 📑')
 @ApiBearerAuth('access-token')
-@Controller('v1.0/loan')
+@Controller({ path: 'loan', version: '1.0' })
 @UseGuards(JwtAuthGuard)
 export class V1LoanController {
     constructor(private readonly loanService: LoanService) { }

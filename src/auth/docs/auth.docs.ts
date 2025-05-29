@@ -4,12 +4,13 @@ import {
     ApiOperation,
     ApiResponse,
 } from '@nestjs/swagger';
-import { LoginDto } from '@auth/dto/login.dto';
+import { LoginResponseDto } from '@auth/dto/login.response.dto';
+
 
 export function DocLogin() {
     return applyDecorators(
         ApiOperation({ summary: 'Iniciar sesión 🔑' }),
-        ApiResponse({ status: 200, description: 'Inicio de sesión exitoso', type: LoginDto }),
+        ApiResponse({ status: 200, description: 'Inicio de sesión exitoso', type: LoginResponseDto }),
         ApiResponse({ status: 401, description: 'Credenciales inválidas' }),
     );
 }

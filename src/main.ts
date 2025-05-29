@@ -1,7 +1,7 @@
 
 
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { AppModule } from '@/app.module';
 import { SwaggerModule } from '@nestjs/swagger';
 import { config } from '@/swagger.config';
@@ -28,6 +28,11 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  app.enableVersioning({
+    type: VersioningType.HEADER,
+    header: 'X-API-Version',
+  });
 
   await app.listen(process.env.PORT || 3000);
 }
