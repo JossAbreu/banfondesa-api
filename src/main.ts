@@ -10,8 +10,16 @@ import { configV1 } from '@/swagger/swagger.config.v1';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  app.enableCors(
+    {
+      origin: '*', // Permitir todas las solicitudes CORS
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Métodos permitidos
+      allowedHeaders: 'Content-Type, Accept', // Encabezados permitidos
+      credentials: true, // Permitir credenciales
+    },
+  );
   app.setGlobalPrefix('api');
+
 
   app.enableVersioning({
     type: VersioningType.URI,
@@ -26,9 +34,6 @@ async function bootstrap() {
       persistAuthorization: true,
     },
   });
-
-
-
 
   // Configuración de la validación global
   app.useGlobalPipes(
