@@ -31,11 +31,14 @@ export class CrearUserService {
         });
         const savedUser = await this.userRepo.save(user);
 
-        const response = new UserResponseDto();
-        response.user.id = savedUser.id;
-        response.user.username = savedUser.username;
-        response.user.status = savedUser.status;
-        response.message = 'Usuario creado exitosamente';
-        return response;
+
+        return {
+            message: 'Usuario creado exitosamente',
+            user: {
+                id: savedUser.id,
+                username: savedUser.username,
+                status: savedUser.status,
+            },
+        };
     }
 }

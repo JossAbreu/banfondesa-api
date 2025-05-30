@@ -1,6 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
-
+import { LoanListResponseDto } from '@/loan/dto/v1.0/loans-list-response.dto';
 export function DocCreateLoan() {
     return applyDecorators(
         ApiOperation({ summary: 'Crear un nuevo préstamo 💳' }),
@@ -14,7 +14,9 @@ export function DocCreateLoan() {
 export function DocGetAllLoans() {
     return applyDecorators(
         ApiOperation({ summary: 'Listar todos los préstamos 📄' }),
-        ApiResponse({ status: 200, description: 'Lista de préstamos obtenida exitosamente' }),
+        ApiResponse({
+            status: 200, description: 'Lista de préstamos obtenida exitosamente', type: LoanListResponseDto
+        }),
         ApiResponse({ status: 401, description: 'No autorizado' }),
     );
 }

@@ -16,7 +16,8 @@ export class LoanBaseService {
     ) { }
 
     //metodo para listar todos los préstamos
-    async findAll() {
+    async findAll(): Promise<{ message: string; loans: Loan[] }> {
+
         return {
             message: 'Lista de préstamos',
             loans: await this.loanRepo.find(),

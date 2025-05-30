@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '@user/entities/user.entity';
+import { UserListResponseDto } from '../dto/v1.0/users-list-response.dto';
 
 
 @Injectable()
@@ -18,7 +19,7 @@ export class UserBaseService {
         return this.userRepo.findOne({ where: { username } });
     }
 
-    async findAll(): Promise<{ message: string; users: { username: string; status: boolean }[] }> {
+    async findAll(): Promise<UserListResponseDto> {
 
         const users = await this.userRepo.find();
 
